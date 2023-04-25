@@ -83,7 +83,7 @@ PostLogin을 통해 2명의 유저가 접속하면 MainMenu 위젯으로 넘어�
 
 
 GameBoard.cpp<br>
-UGameBoard::NativeConstruct()<br>
+-UGameBoard::NativeConstruct()<br>
 ```c++
 	boardSize = Cast<AServerGameStateBase>(GetWorld()->GetGameState())->GetBoardSize();
 	limitTime = Cast<AServerGameStateBase>(GetWorld()->GetGameState())->GetLimitTime();
