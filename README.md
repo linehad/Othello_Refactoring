@@ -69,8 +69,8 @@ void UMainMenu::StartButtonCallback()
 	}
 
 	for (auto Iter = GetWorld()->GetControllerIterator(); Iter; ++Iter) 
- {
-	Cast<AOthelloPlayerController>(Iter->Get())->ChangeWidget(BoardWidgetClass);
+	{
+		Cast<AOthelloPlayerController>(Iter->Get())->ChangeWidget(BoardWidgetClass);
 	}
 }
 ```
