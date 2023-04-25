@@ -65,7 +65,7 @@ void UMainMenu::StartButtonCallback()
 	if (GetWorld()->GetFirstPlayerController()->GetLocalRole() == ROLE_Authority)
 	{
 				Cast<AOthelloGameModeBase>(UGameplayStatics::GetGameMode(GetWorld()))->SetGameData(size, time); // 게임 모드로 변경
-  //		Cast<AServerGameStateBase>(GetWorld()->GetGameState())->SetGameData(size, time); 기존 코
+  //		Cast<AServerGameStateBase>(GetWorld()->GetGameState())->SetGameData(size, time); 기존 코드
 	}
 
 	for (auto Iter = GetWorld()->GetControllerIterator(); Iter; ++Iter) 
