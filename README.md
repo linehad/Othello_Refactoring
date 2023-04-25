@@ -1,7 +1,7 @@
 # [ 목차 ]<a name='0'></a>
 #### 1. [개요](#1)
 #### 2. [지적사항](#2)
-#### 3. [계획](#3)
+#### 3. [간단한 계획](#3)
 #### 4. [개발과정]
 1. [작업 1주차](#4)
 2. [작업 2주차](#5)
@@ -37,11 +37,11 @@
  <br>
  위 4가지 점을 유의 하면서 리팩토링을 합니다.
  
- # 개획<a name='3'></a>
+ #간단한 개획<a name='3'></a>
  [목차로 돌아가기](#0)<br>
 
-1. board에 있는 점수, 타이머 위젯을 별도의 클래스로 나눈다.
-2. 이동 로직을 게임 모드로 옮긴다.
+1. board에 있는 점수, 타이머 위젯을 별도의 클래스로 나눕니다.
+2. 이동 로직을 게임 모드로 옮깁니다.
 3. Ai와 멀티플레이 게임을 합쳐서 솔로플레이, 멀티 플레이 기능으로 나눈다.
 4. 멀티플레이의 경우 RPC의 구조를 모를 때 작성해서 불안정하다. 게임모드에서 처리를 담당하므로, 클라에서는 착수 위치만 넘겨 주게 만든다.
 
@@ -52,15 +52,28 @@
  
 1주차 목표<br>
 여기저기로 분산 된 코드 다시 합치기<br>
-보드는 보드판을 두면 말을 두는 기능만 넣어둘 것!<br>
+보드는 보드판을 두면 말을 두는 기능만 넣어둘 것!<br><br>
 
-역할 정리<br>
-UOthelloPices_UserWidget : 흑돌, 백돌 착수 가능한 위치 표시해 
+MainMenu.cpp
+```c++
+void UMainMenu::StartButtonCallback()
+{	
+	if (GetWorld()->GetFirstPlayerController()->GetLocalRole() == ROLE_Authority)
+	{
+				Cast<AOthelloGameModeBase>(UGameplayStatics::GetGameMode(GetWorld()))->SetGameData(size, time); // 게임 모드로 변경
+  //		Cast<AServerGameStateBase>(GetWorld()->GetGameState())->SetGameData(size, time); 기존 코
+	}
 
-진행중... 생각정리 임시 메모장<br>
-1. 이동로직을 무작정 gameMode로 옮기긴 했으나, 서버, 클라의 통신구조를 다시 짜야 한다.
-2. 위젯으로만 이루어져 있는 코드이기 때문에 이를 보안할 무언가가 필요하다.
-3. 보드 사이즈는 가변적이다. 어차피 서버쪽에서 보드 크기를 정하므로, 위젯을 지우기 전에 gameMode에 값을 넘겨야 한다.
-4. 게임 스테이트는 게임 모드에서 파생되는 클래스 이기 때문에 모드에 있는 값을 스테이트로 가져오면 되지 않을까 싶다.
-<br>
-일시 중단 정처기 공부 해야함 실기 준비 할 것
+	for (auto Iter = GetWorld()->GetControllerIterator(); Iter; ++Iter) 
+ {
+	Cast<AOthelloPlayerController>(Iter->Get())->ChangeWidget(BoardWidgetClass);
+	}
+}
+```
+
+기존 GameState로 보드의 정보와 제한시간을 넘겼지만 로직처리를 게임 모드에서 할 것이기 때문에 여기서 부터 시작합니다.<br>
+코드의 로직처리를 전체적으로 흩뿌려 놨는데 이를 일단 모드에 모아놓습니다.<br><br>
+
+OthelloGameModeBase.cpp<br>
+<img src="https://user-images.githubusercontent.com/91234912/234196379-29657deb-61a0-4d95-91e2-9f8cac2959a2.png" width="800"><br><br>
+아직까지는 강제로 옮겼기 때문에 오류 투성이인 코드이지만 하나씩 수정해 나갑니다.<br>
