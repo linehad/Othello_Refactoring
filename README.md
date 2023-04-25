@@ -79,4 +79,38 @@ void UMainMenu::StartButtonCallback()
 <br>
 게임의 흐름에 맞춰서 코드를 수정합니다.<br>
 PostLogin을 통해 2명의 유저가 접속하면 MainMenu 위젯으로 넘어가게 됩니다.<br>
-기존에는 GameState로 보드의 정보와 제한시간을 넘겼지만 게임의 전반적인 연산을 게임 모드에서 할 것이기 때문에 처음부터 모드로 넘깁니다.<br>
+기존에는 GameState로 보드의 정보와 제한시간을 넘겼지만 게임의 전반적인 연산을 게임 모드에서 할 것이기 때문에 처음부터 모드로 넘깁니다. 하지만 위젯은 리플리케이션이 되지 않기 때문에 보드는 역시 자신의 크기를 알아 합니다.<br><br>
+
+
+GameBoard.cpp<br>
+UGameBoard::NativeConstruct()<br>
+```c++
+	boardSize = Cast<AServerGameStateBase>(GetWorld()->GetGameState())->GetBoardSize();
+	limitTime = Cast<AServerGameStateBase>(GetWorld()->GetGameState())->GetLimitTime();
+
+	seconds = limitTime;
+	// 버튼에 정보 넘겨주고 함수와 묶기
+	if (OthelloButton)
+	{
+		int arr_index = 0;
+
+		arrOthelloButton.Init(nullptr, boardSize * boardSize);
+		for (int i = 0; i < boardSize; i++)
+		{
+			for (int j = 0; j < boardSize; j++)
+			{
+				UUserWidget* widget = CreateWidget(this, OthelloButton);
+				Board_UniformGridPanel->AddChildToUniformGrid(widget, i, j);
+				arrOthelloButton[arr_index] = Cast<UOthelloPices_UserWidget>(widget);
+				arrOthelloButton[arr_index]->SetData(i, j);
+				arrOthelloButton[arr_index]->OthlloPices_Button->OnClicked.AddDynamic(this, &UGameBoard::NextTurn);
+				arr_index++;
+			}
+		}
+		// 시작 돌 놓기
+		StartSet();
+	}
+```
+<br>
+BeginePlay와 같은 역할을 하는 NativeConstruct는 오델로 보드가 생성될 때 보드의 크기와 제한시간을 게임 스테이트에서 받아서 생성하고 있습니다.<br>
+이렇게 할 경우 보드가 만들어지는 타이밍이 보드 크기와 타이머를 받는 시간보다 늦어진다면, 오류가 생길것이 자명하므로 이들을 따로 빼서 함수로 만들고 RPC를 통해 인자를 넘겨서 만들게 하겠습니다.<br>
