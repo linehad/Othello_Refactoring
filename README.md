@@ -71,8 +71,8 @@ void UMainMenu::StartButtonCallback()
 }
 ```
 
-기존 GameState로 보드의 정보와 제한시간을 넘겼지만 로직처리를 게임 모드에서 할 것이기 때문에 여기서 부터 시작합니다.<br>
-코드의 로직처리를 전체적으로 흩뿌려 놨는데 이를 일단 모드에 모아놓습니다.<br><br>
+기존 GameState로 보드의 정보와 제한시간을 넘겼지만 게임의 전반적인 연산을 게임 모드에서 할 것이기 때문에 여기서 부터 시작합니다.<br>
+코드의 로직을 전체적으로 흩뿌려 놨는데 이를 일단 모드에 모아놓습니다.<br><br>
 
 OthelloGameModeBase.cpp<br>
 <img src="https://user-images.githubusercontent.com/91234912/234196379-29657deb-61a0-4d95-91e2-9f8cac2959a2.png" width="800"><br><br>
