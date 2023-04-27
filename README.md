@@ -113,9 +113,12 @@ GameBoard.cpp<br>
 ```
 <br>
 BeginePlay와 같은 역할을 하는 NativeConstruct는 오델로 보드가 생성될 때 보드의 크기와 제한시간을 게임 스테이트에서 받아서 생성하고 있습니다.<br>
-이렇게 할 경우 보드가 만들어지는 타이밍이 보드 크기와 타이머를 받는 시간보다 늦어진다면, 오류가 생길것이 자명하므로 이들을 따로 빼서 함수로 만들고 GameState로 넘긴 뒤 리플리케이트 하여서 클라이언트에 보드의 크기를 넘겨주겠습니다.<br>
+이렇게 할 경우 보드가 만들어지는 타이밍이 보드 크기와 타이머를 받는 시간보다 늦어진다면, 오류가 생길것이 자명하므로 이들을 따로 빼서 함수로 만들고 GameState로 넘긴 뒤 리플리케이트 하여서 클라이언트에 보드의 크기를 넘겨주겠습니다.<br><br>
 <img src="https://user-images.githubusercontent.com/91234912/234791411-1a822131-6d94-454c-9ed5-dcbd3eab21d0.png" width="800"><br>
-<img src="https://user-images.githubusercontent.com/91234912/234791757-4e21b763-b0da-4e1e-8377-715ad3c5edce.png" width="800"><br>
+<img src="https://user-images.githubusercontent.com/91234912/234791757-4e21b763-b0da-4e1e-8377-715ad3c5edce.png" width="800">
 
-이렇게 하면 게임모드에서 보드의 크기와 제한시간을 관리하기 때문에 보안적인 측면에서도 좋습니다.<br>
+이렇게 하면 게임모드에서 보드의 크기와 제한시간을 관리하기 때문에 보안적인 측면에서도 좋습니다.<br><br>
+
 <img src="https://user-images.githubusercontent.com/91234912/234798968-ac279c94-5832-487d-a425-34e9203b3b07.png" width="800"><br>
+지금의 코드에서는 버튼들을 배열에 담아두고, 이를 직접적으로 컨트롤 했기 때문에 Board 위젯 클래스의 크기가 커졌습니다. 게임보드의 전반적인 상태를 저장하는 게임 스테이트에
+int형 Tarry를 선언하고 이를 통해서 연산하도록 합니다.
