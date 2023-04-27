@@ -117,4 +117,4 @@ BeginePlay와 같은 역할을 하는 NativeConstruct는 오델로 보드가 생
 <img src="https://user-images.githubusercontent.com/91234912/234791411-1a822131-6d94-454c-9ed5-dcbd3eab21d0.png" width="800"><br>
 <img src="https://user-images.githubusercontent.com/91234912/234791757-4e21b763-b0da-4e1e-8377-715ad3c5edce.png" width="800"><br>
 
-이렇게 하면 게임모드에서 보드의 크기와 제한시간을 설정하기 관리하기 때문에 보안적인 측면에서도 좋습니다.<br>
+이렇게 하면 게임모드에서 보드의 크기와 제한시간을 관리하기 때문에 보안적인 측면에서도 좋습니다.<br>
