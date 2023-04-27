@@ -115,5 +115,6 @@ GameBoard.cpp<br>
 BeginePlay와 같은 역할을 하는 NativeConstruct는 오델로 보드가 생성될 때 보드의 크기와 제한시간을 게임 스테이트에서 받아서 생성하고 있습니다.<br>
 이렇게 할 경우 보드가 만들어지는 타이밍이 보드 크기와 타이머를 받는 시간보다 늦어진다면, 오류가 생길것이 자명하므로 이들을 따로 빼서 함수로 만들고 GameState로 넘긴 뒤 리플리케이트 하여서 클라이언트에 보드의 크기를 넘겨주겠습니다.<br>
 <img src="https://user-images.githubusercontent.com/91234912/234791411-1a822131-6d94-454c-9ed5-dcbd3eab21d0.png" width="800"><br>
-<img src="https://user-images.githubusercontent.com/91234912/234791757-4e21b763-b0da-4e1e-8377-715ad3c5edce.png" width="800"><br><br>
-이렇게 하면 게임모드에서 모든것을 관리 할 수 있고, 스테이트는 게임모드를 사용하지 않기 때문에 상호 순환참조를 피할 수 있다.
+<img src="https://user-images.githubusercontent.com/91234912/234791757-4e21b763-b0da-4e1e-8377-715ad3c5edce.png" width="800"><br>
+
+이렇게 하면 게임모드에서 보드의 크기와 제한시간을 설정하기 관리하기 때문에 보안적인 측면에서도 좋습니다.<br>
