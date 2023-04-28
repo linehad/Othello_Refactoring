@@ -83,7 +83,7 @@ PostLogin을 통해 2명의 유저가 접속하면 MainMenu 위젯으로 넘어�
 
 
 GameBoard.cpp<br>
--UGameBoard::NativeConstruct()<br>
+-NativeConstruct()<br>
 ```c++
 	boardSize = Cast<AServerGameStateBase>(GetWorld()->GetGameState())->GetBoardSize();
 	limitTime = Cast<AServerGameStateBase>(GetWorld()->GetGameState())->GetLimitTime();
@@ -115,7 +115,7 @@ GameBoard.cpp<br>
 BeginePlay와 같은 역할을 하는 NativeConstruct는 오델로 보드가 생성될 때 보드의 크기와 제한시간을 게임 스테이트에서 받아서 생성하고 있습니다.<br>
 이렇게 할 경우 보드가 만들어지는 타이밍이 보드 크기와 타이머를 받는 시간보다 늦어진다면, 오류가 생길것이 자명하므로 이들을 따로 빼서 함수로 만들고 보드위젯으로 변경될 시점에 게임모드와 보드에 값을 넘겨 주겠습니다.<br><br>
 <img src="https://user-images.githubusercontent.com/91234912/234791411-1a822131-6d94-454c-9ed5-dcbd3eab21d0.png" width="800"><br>
-<img src="https://user-images.githubusercontent.com/91234912/234791757-4e21b763-b0da-4e1e-8377-715ad3c5edce.png" width="800">
+<img src="https://user-images.githubusercontent.com/91234912/234791757-4e21b763-b0da-4e1e-8377-715ad3c5edce.png" width="800"><br>
 
 이렇게 하면 스타트 버튼이 눌리는 시점에 값이 넘어갑니다.<br><br>
 
@@ -148,5 +148,11 @@ void AOthelloPlayerController::ChangeWidget_Implementation(TSubclassOf<UUserWidg
 }
 ```
 
-이제 보드 위젯으로 인자값을 넘겨주어야 하는데 위젯을 교체하는 함수가 문제가 됩니다. 위젯을 교체 할 때마다 맨 하단에 있는 if문처럼 CurrentWidget이 무엇을 들고 있는지 비교를 해야 하기 때문에 각 위젯을 추가하고 지우는 함수를 따로 추가합니다.<br>
+이제 보드 위젯으로 인자값을 넘겨주어야 하는데 위젯을 교체하는 함수가 문제가 됩니다. 위젯을 교체 할 때마다 맨 하단에 있는 if문처럼 CurrentWidget이 무엇을 들고 있는지 비교를 해야 하기 때문에 각 위젯을 추가하고 지우는 함수를 따로 추가합니다.<br><br>
 
+UGameBoard.cpp<br>
+-StartSet(int32 size, int32 time)<br>
+<img src="https://user-images.githubusercontent.com/91234912/234791757-4e21b763-b0da-4e1e-8377-715ad3c5edce.png" width="800"><br><br>
+
+게임이 시작할 때 가운데 첫 돌을 놓는 기능입니다. 이중 OthelloChangeturn은 번갈아 가면서 돌을 놓기 위해서 턴을 넘겨주는 기능을 가진 함수인데, 턴 넘기는 것은 게임 모드로
+옮겼기 때문에 보는 것처럼 오류가 난 경우입니다.
