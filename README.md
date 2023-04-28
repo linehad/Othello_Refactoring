@@ -121,4 +121,33 @@ BeginePlay와 같은 역할을 하는 NativeConstruct는 오델로 보드가 생
 
 <img src="https://user-images.githubusercontent.com/91234912/234798968-ac279c94-5832-487d-a425-34e9203b3b07.png" width="800"><br>
 지금의 코드에서는 버튼들을 배열에 담아두고, 이를 직접적으로 컨트롤 했기 때문에 Board 위젯 클래스의 크기가 커졌습니다. 게임보드의 전반적인 상태를 저장하는 게임 스테이트에
-int형 Tarry를 선언하고 이를 통해서 연산하도록 합니다. 최종적으로 보드는 착수 기능만 남겨놓을 생각입니다. 따라서 해당 배열은 필요하기 때문에 지우지 않습니다.
+int형 Tarry를 선언하고 이를 통해서 연산하도록 합니다. 최종적으로 보드는 착수 기능만 남겨놓을 생각입니다. 따라서 해당 배열은 필요하기 때문에 지우지 않습니다.<br>
+<br>
+
+#include "OthelloPlayerController.cpp"
+```c++
+void AOthelloPlayerController::ChangeWidget_Implementation(TSubclassOf<UUserWidget> NewWidgetClass)
+{
+	if (CurrentWidget != nullptr)
+	{
+		CurrentWidget->RemoveFromViewport();
+		CurrentWidget = nullptr;
+	}
+
+	if (NewWidgetClass != nullptr)
+	{
+		CurrentWidget = CreateWidget(GetWorld(), NewWidgetClass);
+		if (CurrentWidget != nullptr)
+		{
+			CurrentWidget->AddToViewport();
+		}
+	}
+
+	if (CurrentWidget != nullptr && CurrentWidget == Cast<UGameBoard>(CurrentWidget))
+	{
+		Cast<UGameBoard>(CurrentWidget)->StartTimer();
+	}
+}
+```
+
+이제 보드 위젯으로 인자값을 넘겨주어야 하는데 위젯을 교체하는 함수가 문제가 됩니다. 위젯을 교체 할 때마다 맨 하단에 있는 if문처럼 CurrentWidget이 무엇을 들고 있는지 비교를 해야 하기 때문에 각 위젯을 추가하고 지우는 함수를 따로 만들어 주겠습니다.
