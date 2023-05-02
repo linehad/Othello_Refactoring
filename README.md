@@ -156,7 +156,7 @@ UGameBoard.cpp<br>
 <img src="https://user-images.githubusercontent.com/91234912/235110391-b35563ef-bed9-4f3e-8890-6b16c249cbb6.png" width="800" height = "500"><br><br>
 
 게임이 시작할 때 가운데 첫 돌을 놓는 기능입니다. 이중 OthelloChangeturn은 번갈아 가면서 돌을 놓기 위해서 턴을 넘겨주는 기능을 가진 함수인데, 턴 넘기는 것은 게임 모드로
-옮겼기 때문에 보는 것처럼 오류가 났습니다.
+옮겼기 때문에 보는 것처럼 오류가 났습니다. 이는 추후에 수정하겠습니다.
 
  # 2주차<a name='5'></a>
  [목차로 돌아가기](#0)<br>
