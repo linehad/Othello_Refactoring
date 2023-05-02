@@ -114,7 +114,7 @@ GameBoard.cpp<br>
 <br>
 BeginePlay와 같은 역할을 하는 NativeConstruct는 오델로 보드가 생성될 때 보드의 크기와 제한시간을 게임 스테이트에서 받아서 생성하고 있습니다.<br>
 이렇게 할 경우 보드가 만들어지는 타이밍이 보드 크기와 타이머를 받는 시간보다 늦어진다면, 오류가 생길것이 자명하므로 이들을 따로 빼서 함수로 만들고 보드위젯으로 변경될 시점에 게임모드와 보드에 값을 넘겨 주겠습니다.<br><br>
-<img src="https://user-images.githubusercontent.com/91234912/234791411-1a822131-6d94-454c-9ed5-dcbd3eab21d0.png" width="800"><br>
+<img src="https://user-images.githubusercontent.com/91234912/235598106-f8e2ad94-7bbd-4115-8dbc-4689647a9e16.png" width="800"><br>
 
 이렇게 하면 스타트 버튼이 눌리는 시점에 값이 넘어갑니다.<br><br>
 
