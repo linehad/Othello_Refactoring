@@ -13,30 +13,16 @@ UCLASS()
 class OTHELLO_API AOthelloServer_GameModeBase : public AGameModeBase
 {
 	GENERATED_BODY()
-private:
-	UPROPERTY()
-		int time = 0;
-	UPROPERTY()
-		int boardSize;
-
 public:
-	UFUNCTION()
-		void SetTime(int t) { time = t; }
-	UFUNCTION()
-		void SetBoardSize(int size) { boardSize = size; }
-	UFUNCTION()
-		int GetTime() { return time; }
-	UFUNCTION()
-		int GetBoardSize() { return boardSize; }
+	UFUNCTION(BlueprintCallable, Category = "UMG_Game")
+		void ChangeMenuWidget(TSubclassOf<UUserWidget> NewWidgetClass);
 
 protected:
 	virtual void BeginPlay() override;
-	virtual void PostLogin(APlayerController* NewPlayer) override;
 
 	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = "UMG_Game")
 		TSubclassOf<UUserWidget> StartingWidgetClass;
 
 	UPROPERTY()
 		UUserWidget* CurrentWidget;
-
 };

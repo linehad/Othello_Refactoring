@@ -7,31 +7,37 @@
 #include "GameBoard.generated.h"
 
 /**
- *
+ * 
  */
 UCLASS()
 class OTHELLO_API UGameBoard : public UUserWidget
 {
 	GENERATED_BODY()
 private:
-	int boardSize = 0;
-	int limitTime = 0;
-	int beforWhiteScore = 0;
-	int beforBlackScore = 0;
+	int m_Board_Size = 0;
+	int m_Turn_time = 0;
 
-	const int DRAW = 0;
-	const int BLACK = 1;
-	const int WHITE = 2;
+	int seconds = 0;
+
+	int m_wScore = 0;
+	int m_bScore = 0;
+
+	UPROPERTY()
+		TArray<int8> arr_dX = { -1, -1, -1, 0, 0 , 1, 1, 1 };
+	UPROPERTY()
+		TArray<int8> arr_dY = { -1, 0, 1, -1, 1 , -1, 0, 1 };
+
 public:
 	virtual void NativeConstruct() override;
+	
 	UPROPERTY()
-		TArray <class UOthelloPices_UserWidget*>arrOthelloButton;
+		TArray <class UOthelloPices_UserWidget*>Arr_OthelloButton;
+
+		UPROPERTY(BlueprintReadWrite, meta = (BindWidget))
+	class UUniformGridPanel* Board_UniformGridPanel = nullptr;
 
 	UPROPERTY(BlueprintReadWrite, EditAnywhere)
 		TSubclassOf <class UOthelloPices_UserWidget>OthelloButton;
-
-	UPROPERTY(BlueprintReadWrite, meta = (BindWidget))
-		class UUniformGridPanel* Board_UniformGridPanel = nullptr;
 
 	// 흑돌, 백돌 이미지
 	UPROPERTY(BlueprintReadWrite, EditAnywhere)
@@ -60,12 +66,16 @@ public:
 	// 게임오버 위젯 바인딩 이미지
 	UPROPERTY(BlueprintReadWrite, meta = (BindWidget))
 		class UGridPanel* GameOver_GridPanel = nullptr;
-
+	
 	UPROPERTY(BlueprintReadWrite, meta = (BindWidget))
 		class UImage* WinBlack_Image = nullptr;
 	UPROPERTY(BlueprintReadWrite, meta = (BindWidget))
 		class UImage* WinWhite_Image = nullptr;
 
+	UPROPERTY(BlueprintReadWrite, meta = (BindWidget))
+		class UButton* ReStart_Button = nullptr;
+	UPROPERTY(BlueprintReadWrite, meta = (BindWidget))
+		class UButton* MainMenu_Button = nullptr;
 	UPROPERTY(BlueprintReadWrite, meta = (BindWidget))
 		class UButton* Quit_Button = nullptr;
 
@@ -89,44 +99,44 @@ public:
 		class UWidgetAnimation* White_Image1_Anim = nullptr;
 
 
-	// 게임의 흐름을 담당하는 함수들
 public:
-	// 처음 시작할 때 호출할 함수
-	void StartSet();
-
-	// 1차원 배열을 2차월 배열 처럼 쓰기 위한 함수
 	UFUNCTION()
-		inline int16 Board_index(int x, int y) { return (boardSize * y) + x; }
-
-	// 점수를 계산하는 함수
+		void ChangePices(int x, int y, int8 piceColor);
+	UFUNCTION()
+		void OthelloChangeturn();
+	UFUNCTION()
+		inline int16 Board_index(int x, int y) { return (m_Board_Size * y) + x; }
+	UFUNCTION()
+		bool PutOthello(int x, int y, int8 piceColor); // 둘수 있는 위치를 표시하는 함수
 	UFUNCTION()
 		void SetScore(int BScore, int WScore);
 	UFUNCTION()
-		void SetSeconds() { seconds = limitTime; }
-
-	// 시간을 정하는 함수
-	UFUNCTION()
 		void SetTime(int Time);
-
-	UFUNCTION()
-		void CountDown();
-	UFUNCTION()
-		void StartTimer();
-
-	// 게임이 끝났을 때 호출될 함수들
 	UFUNCTION()
 		void GameOver(int8 gameWinner); // 0 무승부 1 흑돌 승 2 백돌 승
 	UFUNCTION()
+		void GoMainMenu();
+	UFUNCTION()
 		void QuitGame();
-
 	UFUNCTION()
-		void NextTurn();
+		void ReStartGame();
 
-	UFUNCTION()
-		void SetwhiteScore(int score) { beforWhiteScore = score; }
-	UFUNCTION()
-		void SetblackScore(int score) { beforBlackScore = score; }
+	UFUNCTION(BlueprintCallable)
+		void OthelloNextturn();
+	UFUNCTION(BlueprintCallable)
+		void CountDown();
 
-	inline void SetBoardSize(int size) { boardSize = size; }
-	inline int GetBoardSize() { return boardSize; }
+	inline void Set_BoardSize(int size) { m_Board_Size = size; }
+	inline int Get_BoardSize() { return m_Board_Size; }
+
+// ai 관련 선언	흰색 돌 = ai
+private:
+	TArray<int32>aiBoard;
+	// 0흑돌 1 백돌
+	TArray<int>aiPice = { -10, -11 };
+	bool aiTurn = false;
+	TArray<TPair<int32, int32>>ai_ReverseIndex; // 해당 위치에 두었을때 뒤집을 수 있는 돌의 개수와 위치 첫번 째 위치 2 번째 뒤집을 개수
+	int32 AireverseNum = 0;
+public:
+	void AiPlayer();
 };
