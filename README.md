@@ -159,4 +159,4 @@ UGameBoard.cpp<br>
 옮겼기 때문에 보는 것처럼 오류가 났습니다.
 
  # 2주차<a name='5'></a>
-<img src="https://user-images.githubusercontent.com/91234912/235624141-679e5fbc-b936-4071-b0da-19e66cafbc5e.png" width="800" height = "800"><br><br>
+<img src="https://user-images.githubusercontent.com/91234912/235624141-679e5fbc-b936-4071-b0da-19e66cafbc5e.png" width="800" height = "400"><br><br>
