@@ -159,4 +159,7 @@ UGameBoard.cpp<br>
 옮겼기 때문에 보는 것처럼 오류가 났습니다.
 
  # 2주차<a name='5'></a>
+ [목차로 돌아가기](#0)<br>
+ 
 <img src="https://user-images.githubusercontent.com/91234912/235624141-679e5fbc-b936-4071-b0da-19e66cafbc5e.png" width="800" height = "400"><br><br>
+하드코딩된 부분들을 enum을 이용해서 가독성을 높이고 오타들을 수정했습니다. 전반적으로 코드가 조금 더 읽기 편해졌습니다.<br>
