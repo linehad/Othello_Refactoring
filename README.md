@@ -163,3 +163,6 @@ UGameBoard.cpp<br>
  
 <img src="https://user-images.githubusercontent.com/91234912/235624141-679e5fbc-b936-4071-b0da-19e66cafbc5e.png" width="800" height = "400"><br><br>
 하드코딩된 부분들을 enum을 이용해서 가독성을 높이고 오타들을 수정했습니다. 전반적으로 코드가 조금 더 읽기 편해졌습니다.<br>
+
+1. 보드의 전체 상황을 모드에 넣을것
+2. 스테이트에는 전체 상황이 아닌 착수 가능한 위치를 넣을것
