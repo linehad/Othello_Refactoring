@@ -15,8 +15,8 @@ class OTHELLO_API UMainMenu : public UUserWidget
 	GENERATED_BODY()
 
 private:
-	bool b_SizeButton = false;
-	bool b_TimeButton = false;
+	bool bSizeButton = false;
+	bool bTimeButton = false;
 
 	int time = 0;
 	int size = 0;
@@ -34,8 +34,7 @@ public:
 	UFUNCTION(BlueprintCallable)
 		void TimeButtonActivate();
 
-	// ������ ���� Size ���� ����
-
+	// 보드 크기를 선택하는 버튼 바인드
 	UPROPERTY(meta = (BindWidget))
 		class UButton* Size_Button_0 = nullptr;
 	UPROPERTY(meta = (BindWidget))
@@ -57,7 +56,7 @@ public:
 	UFUNCTION(BlueprintCallable)
 		void SizeButton3_Callback();
 
-	// ������ ���� �ð� ����
+	// 제한시간을 선택하는 버튼 바인드
 	UPROPERTY(meta = (BindWidget))
 		class UButton* Time_Button_0 = nullptr;
 	UPROPERTY(meta = (BindWidget))
@@ -80,7 +79,7 @@ public:
 		void TimeButton3_Callback();
 
 
-	// ����, ���� ��ư
+	// 시작버튼과 종료버튼 바인드
 	UPROPERTY(meta = (BindWidget))
 		class UButton* Start_Button = nullptr;
 	UPROPERTY(meta = (BindWidget))

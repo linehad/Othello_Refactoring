@@ -2,29 +2,22 @@
 
 
 #include "OthelloServer_GameModeBase.h"
+#include "ServerPlayerController.h"
 #include <Blueprint/UserWidget.h>
 
 void AOthelloServer_GameModeBase::BeginPlay()
 {
 	Super::BeginPlay();
-
-	ChangeMenuWidget(StartingWidgetClass);
 }
 
-void AOthelloServer_GameModeBase::ChangeMenuWidget(TSubclassOf<UUserWidget> NewWidgetClass)
+void AOthelloServer_GameModeBase::PostLogin(APlayerController* NewPlayer)
 {
-	if (CurrentWidget != nullptr)
-	{
-		CurrentWidget->RemoveFromViewport();
-		CurrentWidget = nullptr;
-	}
+	Super::PostLogin(NewPlayer);
 
-	if (NewWidgetClass != nullptr)
+	AServerPlayerController* Controller = Cast<AServerPlayerController>(NewPlayer);
+
+	if (Controller)
 	{
-		CurrentWidget = CreateWidget(GetWorld(), NewWidgetClass);
-		if (CurrentWidget != nullptr)
-		{
-			CurrentWidget->AddToViewport();
-		}
+		Controller->ChangeWidget(StartingWidgetClass);
 	}
 }

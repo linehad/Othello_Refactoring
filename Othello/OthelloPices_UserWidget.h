@@ -6,6 +6,18 @@
 #include "Blueprint/UserWidget.h"
 #include "OthelloPices_UserWidget.generated.h"
 
+enum PieceColor
+{
+	EMPTY,
+	BLACK_PIECE,
+	WHITE_PIECE,
+};
+
+enum Turn
+{
+	BLACK_TURN,
+	WHITE_TURN,
+};
 /**
  * 
  */
@@ -16,20 +28,19 @@ class OTHELLO_API UOthelloPices_UserWidget : public UUserWidget
 private:
 	// false = 흑돌, true = 백돌
 	// 0 = 빈곳, 1 = 흑돌, 2 = 백돌
+	int8 piece = 0; // 놓아져 있는 돌이 흑돌인지 백돌인지 체크
+	int8 gameTurn = 1; // 현재 놓을 차례가 흑돌인지 백돌인지 체크
+	int32 xPos = 0;
+	int32 yPos = 0;
 
-	int8 m_Pice = 0; // 놓아져 있는 돌이 흑돌인지 백돌인지 체크
-	bool b_turn = true; // 현재 놓을 차례가 흑돌인지 백돌인지 체크
-	int32 m_XPos = 0;
-	int32 m_YPos = 0;
-
-	bool m_PossiblePice = false; // 둘수 있는지 없는지 판별
+	bool possiblePiece = false; // 둘수 있는지 없는지 판별
 public:
-	bool b_hit = false;
+	bool bhit = false;
 
 	UPROPERTY(BlueprintReadWrite, meta = (BindWidget))
-		class UButton* OthlloPices_Button = nullptr;
+		class UButton* OthlloPiece_Button = nullptr;
 	UPROPERTY(BlueprintReadWrite, meta = (BindWidget))
-		class UImage* OthlloPices_Image = nullptr;
+		class UImage* OthlloPiece_Image = nullptr;
 
 	UPROPERTY(BlueprintReadWrite, EditAnywhere)
 		UTexture2D* WhiteImage;
@@ -41,27 +52,26 @@ public:
 		UTexture2D* Preview_BlackImage;
 
 	UFUNCTION()
-	void SetTurn(bool turn);
-	UFUNCTION()
 	void SetData(int y, int x);
 	UFUNCTION()
 		void OnBtnClick();
 	UFUNCTION()
-		void Changeturn();
+		void ChangeTurn();
+
+		void ReversePiece();
+		void SetGameTurn(int8 turn) { gameTurn = turn; }
 	UFUNCTION()
-		void ReversePice();
+		int32 GetX() { return xPos; }
 	UFUNCTION()
-		int32 GetX() { return m_XPos; }
+		int32 GetY() { return yPos; }
 	UFUNCTION()
-		int32 GetY() { return m_YPos; }
+		int32 GetPiece() { return piece; }
 	UFUNCTION()
-		int32 GetPice() { return m_Pice; }
+		bool GetTurn() { return gameTurn; }
 	UFUNCTION()
-		bool GetTurn() { return b_turn; }
+		bool GetPossiblePiece() { return possiblePiece; }
 	UFUNCTION()
-		bool GetPossiblePice() { return m_PossiblePice; }
+		void PossiblePiece(); // 클릭 가능
 	UFUNCTION()
-		void PossiblePice();
-	UFUNCTION()
-		void UnPossiblePice();
+		void UnPossiblePiece(); // 클릭 불가능
 };
