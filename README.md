@@ -165,6 +165,27 @@ UGameBoard.cpp<br>
 하드코딩된 부분들을 enum을 이용해서 가독성을 높이고 오타들을 수정했습니다. 전반적으로 코드가 조금 더 읽기 편해졌습니다.<br>
 오류를 주석처리, 수정하여 엔진 실행 가능 상태로 만들었습니다.<br>
 
+<img src="https://user-images.githubusercontent.com/91234912/237028738-8dd8c8ad-119b-4cb8-857a-958f7428c7d9.png" width="800"><br><br>
+데이터를 구조체로 전달하려고 하는데 오류가 나서 엔진이 실행이 되지 않는 문제가 생겼었는데 해당 플러그인과 충돌이 되기 때문이었습니다.
+
+```c++
+USTRUCT(BlueprintType)
+struct FGameInfo
+{
+	GENERATED_BODY()
+
+public:
+	UPROPERTY(BlueprintReadWrite, Category = "GameInfo")
+		int32 Size;
+
+	UPROPERTY(BlueprintReadWrite, Category = "GameInfo")
+		int32 Time;
+};
+```
+
+충돌이 일어난 구조체입니다. 오류를 해결하는 방법으로 **Python Editor Script Plugin**을 비활성화 하는 방법도 있지만, 
+근본적으로는 구조체의 이름이 중복되기 때문에 일어난 일이기 때문에 구조체의 이름을 **FGameInfoStruct**로 바꿔주어서 해결하였습니다.
+
 1. 보드의 전체 상황을 모드에 넣을것
 2. 스테이트에는 전체 상황이 아닌 착수 가능한 위치를 넣을것
 3. 버튼이 눌렸을 때 착수이벤트를 브로드 캐스트하여 처리하고, 착수 가능한 위치를 스테이트로부터 전달받아 돌을 두고 뒤집는다.
