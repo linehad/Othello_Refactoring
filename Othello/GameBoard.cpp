@@ -1,6 +1,3 @@
-// Fill out your copyright notice in the Description page of Project Settings.
-
-
 #include "GameBoard.h"
 #include "OthelloPlayerController.h"
 
@@ -86,7 +83,7 @@ void UGameBoard::CountDown()
 	{
 		if (seconds == 0)
 		{
-			OthelloChangeTurn();
+			//OthelloChangeTurn();
 		}
 		else
 		{
@@ -104,7 +101,7 @@ void UGameBoard::QuitGame()
 
 void UGameBoard::NextTurn()
 {
-	Cast<AOthelloPlayerController>(GetWorld()->GetFirstPlayerController())->SetOthelloNextTurn();
+	//Cast<AOthelloPlayerController>(GetWorld()->GetFirstPlayerController())->SetOthelloNextTurn();
 }
 
 void UGameBoard::SetScore(int black_score, int white_score)

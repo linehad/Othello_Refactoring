@@ -83,5 +83,5 @@ void AOthelloPlayerController::ChangeWidget_Implementation(TSubclassOf<UUserWidg
 
 void AOthelloPlayerController::SetOthelloArrIndex_Implementation(int x, int y)
 {
-	othelloArrIndex = (Cast<AServerGameStateBase>(GetWorld()->GetGameState())->GetBoardSize() * y) + x;
+	//othelloArrIndex = (Cast<AServerGameStateBase>(GetWorld()->GetGameState())->GetBoardSize() * y) + x;
 }

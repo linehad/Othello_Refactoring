@@ -6,13 +6,6 @@
 #include "GameFramework/GameStateBase.h"
 #include "ServerGameStateBase.generated.h"
 
-enum Color
-{
-	EMPTY,
-	BLACK_PIECE,
-	WHITE_PIECE,
-};
-
 UCLASS()
 class OTHELLO_API AServerGameStateBase : public AGameStateBase
 {
