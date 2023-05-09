@@ -17,6 +17,7 @@ class OTHELLO_API AOthelloGameModeBase : public AGameModeBase
 private:
 		int16 limitTime = 0;
 		int16 boardSize = 0;
+		int8 gameTurn = 0;
 
 	int16 changeCount = 0;
 	const int16 ENTRY = 0;
@@ -25,7 +26,7 @@ private:
 		bool bcheckTurn = false;
 		int16 othelloArrIndex; // 눌린 위치를 저장할 변수
 
-	TArray <int8> arrOthelloButton; // 보드 게임의 현재 상황
+	TArray <int32> othelloBoard; // 보드 게임의 현재 상황
 public:
 	UFUNCTION(BlueprintCallable, Category = "UMG_Game")
 	void SetStartingWidget(TSubclassOf<UUserWidget> StartingWidget){ StartingWidgetClass = StartingWidget;	}
@@ -39,12 +40,10 @@ public:
 		void SetGameData(int size, int time);
 
 	// 다음 턴이 되었을 때 실행 할 함수
-	UFUNCTION()
 		void OthelloNextTurn(int othelloArrIndex);
 
 	// 게임의 턴을 뒤집는 함수
-	UFUNCTION()
-		void OthelloChangeTurn();
+		TArray<int8> OthelloChangeTurn(int32 pX, int32 py); // 게임턴에 따라 현재 플레이어 색의 돌의 착수 가능 위치를 표시해주는 함수
 
 	void SetOthelloArrIndex(int16 index) { othelloArrIndex = index; }
 protected:

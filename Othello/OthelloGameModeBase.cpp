@@ -32,8 +32,10 @@ void AOthelloGameModeBase::SetGameData(int size, int time)
 {
 	limitTime = time;
 	boardSize = size;
-	arrOthelloButton.Empty();
-	arrOthelloButton.Init(EMPTY, size);
+	gameTurn = BLACK_TURN; // 나중에 게임을 다시 시작하게 될 경우를 위한 초기화
+
+	othelloBoard.Empty();
+	othelloBoard.Init(EMPTY, size);
 
 	Cast<AServerGameStateBase>(GetWorld()->GetGameState())->SetData(time, size);
 	for (auto Iter = GetWorld()->GetControllerIterator(); Iter; ++Iter)
@@ -95,7 +97,7 @@ void AOthelloGameModeBase::OthelloNextTurn(int othelloArrIndex)
 	// 버튼을 찾고 뒤집는다.
 	OthelloBoard->arrOthelloButton[othelloArrIndex]->OnBtnClick();
 	logic.ChangePices(OthelloBoard->arrOthelloButton[othelloArrIndex]->GetX(),
-		OthelloBoard->arrOthelloButton[othelloArrIndex]->GetY(), OthelloBoard->arrOthelloButton[othelloArrIndex]->GetPiece(), boardSize, OthelloBoard->arrOthelloButton);
+		OthelloBoard->arrOthelloButton[othelloArrIndex]->GetY(), OthelloBoard->arrOthelloButton[othelloArrIndex]->GetPiece(), OthelloBoard->arrOthelloButton);
 
 	// 클라 턴일때도 서버에서 실행됨... 따라서 당장 hit를 초기화 하는게 아니라 다음번 순서에 초기화 해야함...
 	if (GetWorld()->GetFirstPlayerController()->GetLocalRole() == ROLE_Authority)
@@ -129,7 +131,7 @@ void AOthelloGameModeBase::OthelloNextTurn(int othelloArrIndex)
 		int32 Py = OthelloBoard->arrOthelloButton[i]->GetY();
 		OthelloBoard->arrOthelloButton[i]->ChangeTurn();
 		// 해당 영역에 둘수 있는지 없는지를 체크한다.
-		if (logic.PutOthello(Px, Py, OthelloBoard->arrOthelloButton[i]->GetTurn() + 1, boardSize, OthelloBoard->arrOthelloButton)
+		if (logic.IsPutOthello(Px, Py, OthelloBoard->arrOthelloButton[i]->GetTurn() + 1, boardSize, OthelloBoard->arrOthelloButton)
 			&& OthelloBoard->arrOthelloButton[i]->GetPiece() == 0)
 		{
 			// 해당 위치에 두었을때 뒤집을 수 있는 돌의 개수와 위치
@@ -163,33 +165,39 @@ void AOthelloGameModeBase::OthelloNextTurn(int othelloArrIndex)
 	}
 }
 
-void AOthelloGameModeBase::OthelloChangeTurn()
+TArray<int8> AOthelloGameModeBase::OthelloChangeTurn(int32 pX, int32 pY)
 {
 	int white_score = 0;
 	int black_score = 0;
 	OthelloNativeClass logic;
+	TArray<int8> possiblePos;
+	possiblePos.Empty();
+
+	gameTurn = !gameTurn; // not 연산으로 1은 0으로 0은 1로 바뀜 사실상 bool형 변수
 	//seconds = limitTime;
 	//SetTime(seconds); // 타이머 위젯 하나 만들것
 
 	// 여기서 누를 곳을 표시할 위치를 계산 해야함
 
 	// 버튼 초기화
-	for (int i = 0; i < boardSize * boardSize; i++)
-	{
-		arrOthelloButton[i]->UnPossiblePiece(); // 개문제 그냥 누를 수 있는 위치를 알려주는 함수
-	}
+	//for (int i = 0; i < boardSize * boardSize; i++)
+	//{
+	//	arrOthelloButton[i]->UnPossiblePiece(); // 개문제 모든 배열을 돌면서 버튼 초기화 이 부분은 보드에서 처리
+	//}
 
 	for (int i = 0; i < boardSize * boardSize; i++)
 	{
-		white_score = arrOthelloButton[i]->GetPice() == WHITE_PIECE? ++white_score : white_score;
-		black_score = arrOthelloButton[i]->GetPice() == BLACK_PIECE ? ++black_score : black_score;
+		white_score = othelloBoard[i] == WHITE_PIECE? ++white_score : white_score; // 점수를 세는 기능들
+		black_score = othelloBoard[i] == BLACK_PIECE ? ++black_score : black_score;
 
-		int32 pX = arrOthelloButton[i]->GetX();
-		int32 pY = arrOthelloButton[i]->GetY();
-		arrOthelloButton[i]->Changeturn();
-		if (logic.PutOthello(pX, pY, arrOthelloButton[i]->GetTurn() + 1, boardSize, arrOthelloButton) && arrOthelloButton[i]->GetPice() == 0)
+		//int32 pX = arrOthelloButton[i]->GetX(); // 이건 또 뭐야
+		//int32 pY = arrOthelloButton[i]->GetY();
+		// othelloBoard[i]->Changeturn(); // 이놈도 각 버튼의 턴을 바꿔주는데 보드에서 구현 해야함
+		if (logic.IsPutOthello(pX, pY, gameTurn, othelloBoard) && othelloBoard[i] == EMPTY) // 착수 가능한 위치를 표시해주는 기능
 		{
-			arrOthelloButton[i]->PossiblePice();
+			// othelloBoard[i]->PossiblePice();	 // 마찬가지로 보드에 구현할것 여기서는 리턴만 해줄거임
+			possiblePos.Add(i);
 		}
 	}
+	return possiblePos;
 }
