@@ -163,7 +163,7 @@ UGameBoard.cpp<br>
  
 <img src="https://user-images.githubusercontent.com/91234912/235624141-679e5fbc-b936-4071-b0da-19e66cafbc5e.png" width="800" height = "400"><br><br>
 하드코딩된 부분들을 enum을 이용해서 가독성을 높이고 오타들을 수정했습니다. 전반적으로 코드가 조금 더 읽기 편해졌습니다.<br>
-오류를 주석처리, 수정하여 엔진 실행 가능 상태로 만들었습니다.<br>
+또한 문법 오류와 기능들을 일부 주석처리하고 수정하여 엔진을 실행 가능 상태로 만들었습니다.<br>
 
 <img src="https://user-images.githubusercontent.com/91234912/237028738-8dd8c8ad-119b-4cb8-857a-958f7428c7d9.png" width="800"><br><br>
 데이터를 구조체로 전달하려고 하는데 오류가 나서 엔진이 실행이 되지 않는 문제가 생겼었는데 해당 플러그인과 충돌이 되기 때문이었습니다.
