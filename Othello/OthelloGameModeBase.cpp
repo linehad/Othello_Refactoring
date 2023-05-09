@@ -30,9 +30,9 @@ void AOthelloGameModeBase::PostLogin(APlayerController* NewPlayer)
 
 void AOthelloGameModeBase::SetGameData(int size, int time)
 {
-	limitTime = time;
-	boardSize = size;
-	gameTurn = BLACK_TURN; // 나중에 게임을 다시 시작하게 될 경우를 위한 초기화
+	GameInfoStruct.Time = time;
+	GameInfoStruct.Size = size * size;
+	GameInfoStruct.GameTurn = BLACK_TURN; // 나중에 게임을 다시 시작하게 될 경우를 위한 초기화
 
 	othelloBoard.Empty();
 	othelloBoard.Init(EMPTY, size);
@@ -69,17 +69,13 @@ void AOthelloGameModeBase::OthelloNextTurn(int arrIndex)
 	int gameOver = 0;
 	int8 winnner = 0;
 
-	int black_count = 0;
-	int white_count = 0;
-
-	const int DRAW = 0;
-	const int BLACK = 1;
-	const int WHITE = 2;
+	int32 black_count = 0;
+	int32 white_count = 0;
 
 	// OthelloBoard->SetTime(limitTime); 타미머 돌리는 함수 바꿔주자
 
 	// 버튼 초기화
-	for (int i = 0; i < boardSize * boardSize; i++)
+	for (int i = 0; i < GameInfoStruct.Size; i++)
 	{
 		// OthelloBoard->arrOthelloButton[i]->UnPossiblePiece(); // 누를 수 있던 부분을 비활성화 해주는 부분 보드로 옮기자
 		white_score = othelloBoard[i] == WHITE_PIECE ? ++white_score : white_score; // 점수를 세는 기능들
@@ -174,7 +170,7 @@ void AOthelloGameModeBase::OthelloNextTurn(int arrIndex)
 
 void AOthelloGameModeBase::OthelloChangeTurn()
 {
-	gameTurn = !gameTurn; // not 연산으로 1은 0으로 0은 1로 바뀜 사실상 bool형 변수
+	GameInfoStruct.GameTurn = !GameInfoStruct.GameTurn; // not 연산으로 1은 0으로 0은 1로 바뀜 사실상 bool형 변수
 }
 
 TArray<int8> AOthelloGameModeBase::OthelloChangeTurn(int32 pX, int32 pY)
@@ -185,7 +181,7 @@ TArray<int8> AOthelloGameModeBase::OthelloChangeTurn(int32 pX, int32 pY)
 	TArray<int8> possiblePos;
 	possiblePos.Empty();
 
-	gameTurn = !gameTurn; // not 연산으로 1은 0으로 0은 1로 바뀜 사실상 bool형 변수
+	GameInfoStruct.GameTurn = !GameInfoStruct.GameTurn; // not 연산으로 1은 0으로 0은 1로 바뀜 사실상 bool형 변수
 	//seconds = limitTime;
 	//SetTime(seconds); // 타이머 위젯 하나 만들것
 
@@ -197,7 +193,7 @@ TArray<int8> AOthelloGameModeBase::OthelloChangeTurn(int32 pX, int32 pY)
 	//	arrOthelloButton[i]->UnPossiblePiece(); // 개문제 모든 배열을 돌면서 버튼 초기화 이 부분은 보드에서 처리
 	//}
 
-	for (int i = 0; i < boardSize * boardSize; i++)
+	for (int i = 0; i < GameInfoStruct.Size; i++)
 	{
 		white_score = othelloBoard[i] == WHITE_PIECE ? ++white_score : white_score; // 점수를 세는 기능들
 		black_score = othelloBoard[i] == BLACK_PIECE ? ++black_score : black_score;
@@ -205,7 +201,7 @@ TArray<int8> AOthelloGameModeBase::OthelloChangeTurn(int32 pX, int32 pY)
 		//int32 pX = arrOthelloButton[i]->GetX(); // 이건 또 뭐야
 		//int32 pY = arrOthelloButton[i]->GetY();
 		// othelloBoard[i]->Changeturn(); // 이놈도 각 버튼의 턴을 바꿔주는데 보드에서 구현 해야함
-		if (logic.IsPutOthello(pX, pY, gameTurn, othelloBoard) && othelloBoard[i] == EMPTY) // 착수 가능한 위치를 표시해주는 기능
+		if (logic.IsPutOthello(pX, pY, GameInfoStruct.GameTurn, othelloBoard) && othelloBoard[i] == EMPTY) // 착수 가능한 위치를 표시해주는 기능
 		{
 			// othelloBoard[i]->PossiblePice();	 // 마찬가지로 보드에 구현할것 여기서는 리턴만 해줄거임
 			possiblePos.Add(i);

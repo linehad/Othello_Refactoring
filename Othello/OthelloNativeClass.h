@@ -1,5 +1,3 @@
-// Fill out your copyright notice in the Description page of Project Settings.
-
 #pragma once
 
 #include "CoreMinimal.h"
@@ -15,7 +13,7 @@ private:
 	const int DIRECTUIN = 8;
 public:
 	// 돌의 색을 뒤집는 함수
-		void ChangePices(int x, int y, int8 turn, TArray <int32>arrOthelloButton);
+	TArray <int32> ChangePices(int x, int y, int8 turn, TArray <int32>arrOthelloButton);
 	// 둘수 있는 위치를 표시하는 함수
 		bool IsPutOthello(int x, int y, int8 turn, TArray <int32>arrOthelloButton);
 	// 1차원 배열을 2차월 배열 처럼 쓰기 위한 함수

@@ -1,5 +1,3 @@
-// Fill out your copyright notice in the Description page of Project Settings.
-
 #pragma once
 
 #include "CoreMinimal.h"
@@ -18,9 +16,7 @@ enum Turn
 	BLACK_TURN,
 	WHITE_TURN,
 };
-/**
- * 
- */
+
 UCLASS()
 class OTHELLO_API UOthelloPices_UserWidget : public UUserWidget
 {
@@ -67,7 +63,7 @@ public:
 	UFUNCTION()
 		int32 GetPiece() { return piece; }
 	UFUNCTION()
-		bool GetTurn() { return gameTurn; }
+		int8 GetTurn() { return gameTurn; }
 	UFUNCTION()
 		bool GetPossiblePiece() { return possiblePiece; }
 	UFUNCTION()

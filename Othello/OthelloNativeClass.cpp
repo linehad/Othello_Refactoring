@@ -1,14 +1,13 @@
-// Fill out your copyright notice in the Description page of Project Settings.
-
-
 #include "OthelloNativeClass.h"
 #include "OthelloPices_UserWidget.h"
 
 // 이것도 개문제 연산만 해서 뒤집어야 되는 애들의 위치만 넘겨줘야됨
-void OthelloNativeClass::ChangePices(int x, int y, int8 turn, TArray <int32>arrOthelloButton)
+TArray <int32> OthelloNativeClass::ChangePices(int x, int y, int8 turn, TArray <int32>arrOthelloButton)
 {
 	int32 boardSize = arrOthelloButton.Num();
 	int8 piece = turn == BLACK_TURN ? BLACK_PIECE : WHITE_PIECE;
+	TArray <int32>reverseIndex;
+	reverseIndex.Empty();
 
 	for (int i = 0; i < DIRECTUIN; i++)
 	{
@@ -34,15 +33,15 @@ void OthelloNativeClass::ChangePices(int x, int y, int8 turn, TArray <int32>arrO
 				break;
 			}
 			// 실제로 뒤집는다.
-			arrOthelloButton[Board_index(nx, ny, boardSize)]->ReversePiece(); // 이 부분을 뒤집어야 할 위치를 저장해서 리턴해줘야 한다
-
+			//arrOthelloButton[Board_index(nx, ny, boardSize)]->ReversePiece(); // 이 부분을 뒤집어야 할 위치를 저장해서 리턴해줘야 한다
+			reverseIndex.Add(Board_index(nx, ny, boardSize));
 			nx -= arr_dX[i];
 			ny -= arr_dY[i];
 		}
 	}
+	return reverseIndex;
 }
 
-// 매개 변수 바꿔서 다시 설계 해야됨 index 따로 만들어서 보기 편하게 만들자
 // 둘수 있는 위치를 표시해주는 함수
 bool OthelloNativeClass::IsPutOthello(int x, int y, int8 turn, TArray <int32>arrOthelloButton)
 {

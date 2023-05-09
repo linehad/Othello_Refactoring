@@ -1,6 +1,3 @@
-// Fill out your copyright notice in the Description page of Project Settings.
-
-
 #include "OthelloPices_UserWidget.h"
 #include "OthelloPlayerController.h"
 #include <Components/Button.h>
@@ -19,13 +16,13 @@ void UOthelloPices_UserWidget::OnBtnClick()
 	OthlloPiece_Button->SetVisibility(ESlateVisibility::HitTestInvisible);
 
 	Cast<AOthelloPlayerController>(GetWorld()->GetFirstPlayerController())->SetOthelloArrIndex(xPos, yPos);
-	if (gameTurn=BLACK_TURN && piece == EMPTY)
+	if (gameTurn == BLACK_TURN && piece == EMPTY)
 	{
 		bhit = true;
 		OthlloPiece_Image->SetBrushFromTexture(BlackImage, true);
 		piece = BLACK_PIECE;
 	}
-	else if (gameTurn = WHITE_TURN && piece == EMPTY)
+	else if (gameTurn == WHITE_TURN && piece == EMPTY)
 	{
 		bhit = true;
 		OthlloPiece_Image->SetBrushFromTexture(WhiteImage, true);
@@ -38,12 +35,12 @@ void UOthelloPices_UserWidget::ReversePiece()
 	OthlloPiece_Image->SetVisibility(ESlateVisibility::HitTestInvisible);
 	OthlloPiece_Button->SetVisibility(ESlateVisibility::HitTestInvisible);
 
-	if (gameTurn=BLACK_TURN)
+	if (gameTurn == BLACK_TURN)
 	{
 		OthlloPiece_Image->SetBrushFromTexture(BlackImage, true); // 검은색 돌을 둠
 		piece = BLACK_PIECE;
 	}
-	else if (gameTurn=WHITE_TURN)
+	else if (gameTurn == WHITE_TURN)
 	{
 		OthlloPiece_Image->SetBrushFromTexture(WhiteImage, true);
 		piece = WHITE_PIECE;
@@ -58,7 +55,7 @@ void UOthelloPices_UserWidget::PossiblePiece()
 	// 서버일 때 흑돌
 	if (GetWorld()->GetFirstPlayerController()->GetLocalRole() == ROLE_Authority)
 	{
-		if (gameTurn = BLACK_TURN && piece == EMPTY)
+		if (gameTurn == BLACK_TURN && piece == EMPTY)
 		{
 			OthlloPiece_Image->SetBrushFromTexture(Preview_BlackImage, true);
 			OthlloPiece_Button->SetVisibility(ESlateVisibility::Visible);
@@ -69,7 +66,7 @@ void UOthelloPices_UserWidget::PossiblePiece()
 	// 클라 일 때는 백돌!
 	if (GetWorld()->GetFirstPlayerController()->GetRemoteRole() == ROLE_Authority)
 	{
-		if (gameTurn = WHITE_TURN && piece == EMPTY)
+		if (gameTurn == WHITE_TURN && piece == EMPTY)
 		{
 			OthlloPiece_Image->SetBrushFromTexture(Preview_WhiteImage, true);
 			OthlloPiece_Button->SetVisibility(ESlateVisibility::Visible);
