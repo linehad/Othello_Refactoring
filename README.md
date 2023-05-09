@@ -166,7 +166,14 @@ UGameBoard.cpp<br>
 또한 문법 오류와 기능들을 일부 주석처리하고 수정하여 엔진을 실행 가능 상태로 만들었습니다.<br>
 
 <img src="https://user-images.githubusercontent.com/91234912/237028738-8dd8c8ad-119b-4cb8-857a-958f7428c7d9.png" width="800"><br><br>
-데이터를 구조체로 전달하려고 하는데 오류가 나서 엔진이 실행이 되지 않는 문제가 생겼었는데 해당 플러그인과 충돌이 되기 때문이었습니다.
+데이터를 구조체로 전달하려고 하는데 오류가 나서 엔진이 실행이 되지 않는 문제가 생겼었는데 해당 플러그인과 충돌이 되기 때문이었습니다.<br>
+<br>
+아래는 오류 내용입니다.
+```
+Assertion failed: !GeneratedWrappedTypes.Contains(TypeRegistryName) [File:D:/Build/++UE4/Sync/Engine/Plugins/Experimental/PythonScriptPlugin/Source/
+PythonScriptPlugin/Private/PyWrapperTypeRegistry.cpp] [Line: 1455]
+```
+<br>
 
 ```c++
 USTRUCT(BlueprintType)
