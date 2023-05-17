@@ -4,6 +4,7 @@
 
 #include "CoreMinimal.h"
 #include "GameFramework/PlayerController.h"
+#include "GameInfoStruct.h"
 #include "OthelloPlayerController.generated.h"
 
 /**
@@ -21,6 +22,7 @@ private:
 	int beforeBlackScore = 0;
 	int beforeWhiteScore = 0;
 
+	FGameInfoStruct GameInfoStruct;
 public:
 	virtual void BeginPlay() override;
 
@@ -49,6 +51,14 @@ public:
 	UFUNCTION(Client, Reliable)
 		void ChangeWidget(TSubclassOf<UUserWidget> NewWidgetClass);
 	void ChangeWidget_Implementation(TSubclassOf<UUserWidget> NewWidgetClass);
+
+	UFUNCTION()
+		void Server_GameInfoStructUpdated(FName PropertyName, const FGameInfoStruct& Data);
+
+	UFUNCTION(Client, Reliable)
+		void Client_UpdateGameInfo(const FGameInfoStruct& Data);
+	void Client_UpdateGameInfo_Implementation(const FGameInfoStruct& Data);
+
 public:
 	// 눌린 버튼을 설정할 함수
 	UFUNCTION(Server, Reliable)
@@ -59,4 +69,6 @@ public:
 		UUserWidget* CurrentWidget = nullptr;
 	UPROPERTY()
 		UUserWidget* BoardWidget = nullptr;
+	UFUNCTION()
+		const FGameInfoStruct GetGameInfoStruct() { return GameInfoStruct; }
 };

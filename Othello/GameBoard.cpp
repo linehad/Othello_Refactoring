@@ -131,10 +131,9 @@ void UGameBoard::SetScore(int black_score, int white_score)
 	}
 }
 
-void UGameBoard::StartSet(int32 size, int32 time)
+void UGameBoard::StartSet()
 {
-	boardSize = size;
-	limitTime = time;
+	FGameInfoStruct GameInfoStruct = Cast<AOthelloPlayerController>(GetWorld()->GetFirstPlayerController())->GetGameInfoStruct();
 
 	seconds = limitTime;
 	// 버튼에 정보 넘겨주고 함수와 묶기
@@ -158,23 +157,23 @@ void UGameBoard::StartSet(int32 size, int32 time)
 	}
 
 	// 가운데 돌 두는 기능
-	int y = boardSize / 2 - 1;
-	int x = (boardSize / 2) - 1;
-	int index = 0;
+	//int y = boardSize / 2 - 1;
+	//int x = (boardSize / 2) - 1;
+	//int index = 0;
 
-	for (int i = 0; i < 2; i++)
-	{
-		index = Board_index(x++, y++);
-		arrOthelloButton[index]->ReversePiece(); // 백돌 놓음
-	}
-	for (int i = 0; i < 2; i++)
-	{
-		y = boardSize / 2 - 1;
-		x = (boardSize / 2);
-		index = Board_index(x--, y++);
-		arrOthelloButton[index]->SetGameTurn(BLACK_TURN); // 각돌에는 턴을 세는 변수가 있어서 바꿔주어야 함
-		arrOthelloButton[index]->ReversePiece(); // 흑돌 놓음
-		arrOthelloButton[index]->SetGameTurn(WHITE_TURN); // 바꾼 턴 원위치
-	}
+	//for (int i = 0; i < 2; i++)
+	//{
+	//	index = Board_index(x++, y++);
+	//	arrOthelloButton[index]->ReversePiece(); // 백돌 놓음
+	//}
+	//for (int i = 0; i < 2; i++)
+	//{
+	//	y = boardSize / 2 - 1;
+	//	x = (boardSize / 2);
+	//	index = Board_index(x--, y++);
+	//	arrOthelloButton[index]->SetGameTurn(BLACK_TURN); // 각돌에는 턴을 세는 변수가 있어서 바꿔주어야 함
+	//	arrOthelloButton[index]->ReversePiece(); // 흑돌 놓음
+	//	arrOthelloButton[index]->SetGameTurn(WHITE_TURN); // 바꾼 턴 원위치
+	//}
 
 }

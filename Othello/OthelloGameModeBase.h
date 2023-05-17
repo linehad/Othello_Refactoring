@@ -2,18 +2,8 @@
 
 #include "CoreMinimal.h"
 #include "GameFramework/GameModeBase.h"
+#include "GameInfoStruct.h"
 #include "OthelloGameModeBase.generated.h"
-
-USTRUCT()
-struct FGameInfoStruct
-{
-	GENERATED_BODY()
-
-public:
-		int32 Size;
-		int32 Time;
-		int8 GameTurn = 0;
-};
 
 
 DECLARE_DYNAMIC_MULTICAST_DELEGATE_TwoParams(FGameInfoStructUpdated, FName, PropertyName, const FGameInfoStruct&, Data);

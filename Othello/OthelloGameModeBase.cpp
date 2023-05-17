@@ -37,7 +37,9 @@ void AOthelloGameModeBase::SetGameData(int size, int time)
 	othelloBoard.Empty();
 	othelloBoard.Init(EMPTY, size);
 
-	Cast<AServerGameStateBase>(GetWorld()->GetGameState())->SetData(time, size);
+	OnGameInfoUpdated.Broadcast(TEXT("GameInfo"), GameInfoStruct);
+
+	//Cast<AServerGameStateBase>(GetWorld()->GetGameState())->SetData(time, size);
 	for (auto Iter = GetWorld()->GetControllerIterator(); Iter; ++Iter)
 	{
 		Cast<AOthelloPlayerController>(Iter->Get())->ResetBoardWidget(BoardWidgetClass, size, time);
@@ -209,3 +211,6 @@ TArray<int8> AOthelloGameModeBase::OthelloChangeTurn(int32 pX, int32 pY)
 	}
 	return possiblePos;
 }
+
+
+

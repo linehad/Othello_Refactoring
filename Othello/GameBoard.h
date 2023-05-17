@@ -93,7 +93,7 @@ public:
 	// 게임의 흐름을 담당하는 함수들
 public:
 	// 처음 시작할 때 호출할 함수
-	void StartSet(int32 size, int32 time);
+	void StartSet();
 
 	// 1차원 배열을 2차월 배열 처럼 쓰기 위한 함수
 	UFUNCTION()
