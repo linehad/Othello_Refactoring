@@ -1,4 +1,5 @@
 #include "GameBoard.h"
+#include "ServerGameStateBase.h"
 #include "OthelloPlayerController.h"
 
 #include "OthelloPices_UserWidget.h"
@@ -67,7 +68,7 @@ void UGameBoard::StartTimer()
 	// 타이머 핸들러를 통해 시간을 업데이트한다.
 	FTimerHandle timerHandle;
 	GetWorld()->GetTimerManager().SetTimer(timerHandle, this, &UGameBoard::CountDown, 1.f, true, 0.0);
-	seconds = limitTime;
+	seconds = GameInfoStruct.Time;
 }
 
 void UGameBoard::CountDown()
@@ -133,18 +134,17 @@ void UGameBoard::SetScore(int black_score, int white_score)
 
 void UGameBoard::StartSet()
 {
-	FGameInfoStruct GameInfoStruct = Cast<AOthelloPlayerController>(GetWorld()->GetFirstPlayerController())->GetGameInfoStruct();
-
-	seconds = limitTime;
+	GameInfoStruct = Cast<AServerGameStateBase>(GetWorld()->GetGameState())->GetGameInfoStruct();
+	seconds = GameInfoStruct.Time;
 	// 버튼에 정보 넘겨주고 함수와 묶기
 	if (OthelloButton)
 	{
 		int arr_index = 0;
 
-		arrOthelloButton.Init(nullptr, boardSize * boardSize);
-		for (int i = 0; i < boardSize; i++)
+		arrOthelloButton.Init(nullptr, GameInfoStruct.Size * GameInfoStruct.Size);
+		for (int i = 0; i < GameInfoStruct.Size; i++)
 		{
-			for (int j = 0; j < boardSize; j++)
+			for (int j = 0; j < GameInfoStruct.Size; j++)
 			{
 				UUserWidget* widget = CreateWidget(this, OthelloButton);
 				Board_UniformGridPanel->AddChildToUniformGrid(widget, i, j);
@@ -157,8 +157,12 @@ void UGameBoard::StartSet()
 	}
 
 	// 가운데 돌 두는 기능
-	//int y = boardSize / 2 - 1;
-	//int x = (boardSize / 2) - 1;
+	int y = GameInfoStruct.Size / 2;
+	int x = (GameInfoStruct.Size / 2 - 1);
+	arrOthelloButton[Board_index(x, y)]->StartPlacement(BLACK_TURN);
+	arrOthelloButton[Board_index(x + 1, y)]->StartPlacement(WHITE_TURN);
+	arrOthelloButton[Board_index(x + 1, y - 1)]->StartPlacement(BLACK_TURN);
+	arrOthelloButton[Board_index(x, y -1)]->StartPlacement(WHITE_TURN);
 	//int index = 0;
 
 	//for (int i = 0; i < 2; i++)

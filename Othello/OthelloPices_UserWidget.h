@@ -22,10 +22,12 @@ class OTHELLO_API UOthelloPices_UserWidget : public UUserWidget
 {
 	GENERATED_BODY()
 private:
+	class AServerGameStateBase* GameStateBase = nullptr;
+
 	// false = 흑돌, true = 백돌
 	// 0 = 빈곳, 1 = 흑돌, 2 = 백돌
 	int8 piece = 0; // 놓아져 있는 돌이 흑돌인지 백돌인지 체크
-	int8 gameTurn = 1; // 현재 놓을 차례가 흑돌인지 백돌인지 체크
+	//int8 gameTurn = 1; // 현재 놓을 차례가 흑돌인지 백돌인지 체크
 	int32 xPos = 0;
 	int32 yPos = 0;
 
@@ -55,15 +57,12 @@ public:
 		void ChangeTurn();
 
 		void ReversePiece();
-		void SetGameTurn(int8 turn) { gameTurn = turn; }
-	UFUNCTION()
+		//void SetGameTurn(int8 turn) { gameTurn = turn; }
 		int32 GetX() { return xPos; }
-	UFUNCTION()
 		int32 GetY() { return yPos; }
 	UFUNCTION()
 		int32 GetPiece() { return piece; }
-	UFUNCTION()
-		int8 GetTurn() { return gameTurn; }
+	void StartPlacement(bool turn);
 	UFUNCTION()
 		bool GetPossiblePiece() { return possiblePiece; }
 	UFUNCTION()

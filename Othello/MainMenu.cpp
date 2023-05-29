@@ -1,6 +1,7 @@
 #include "MainMenu.h"
 #include "OthelloPlayerController.h"
 #include "OthelloGameModeBase.h"
+#include "ServerGameStateBase.h"
 
 #include "Kismet/KismetSystemLibrary.h"
 #include "Kismet/GameplayStatics.h"
@@ -24,6 +25,8 @@ void UMainMenu::NativeConstruct()
 	Time_Button_1->OnClicked.AddDynamic(this, &UMainMenu::TimeButton1_Callback);
 	Time_Button_2->OnClicked.AddDynamic(this, &UMainMenu::TimeButton2_Callback);
 	Time_Button_3->OnClicked.AddDynamic(this, &UMainMenu::TimeButton3_Callback);
+
+	Cast<AServerGameStateBase>(GetWorld()->GetGameState())->BindEvent();
 }
 
 void UMainMenu::StartButtonCallback()

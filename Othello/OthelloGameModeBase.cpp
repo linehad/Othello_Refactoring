@@ -1,5 +1,4 @@
 ﻿#include "OthelloGameModeBase.h"
-#include "ServerGameStateBase.h"
 #include "GameBoard.h"
 #include "OthelloPices_UserWidget.h"
 #include "OthelloNativeClass.h"
@@ -10,6 +9,8 @@
 void AOthelloGameModeBase::BeginPlay()
 {
 	Super::BeginPlay();
+
+	BoardInfoStruct.BoardArr.Empty();
 }
 
 void AOthelloGameModeBase::PostLogin(APlayerController* NewPlayer)
@@ -31,13 +32,12 @@ void AOthelloGameModeBase::PostLogin(APlayerController* NewPlayer)
 void AOthelloGameModeBase::SetGameData(int size, int time)
 {
 	GameInfoStruct.Time = time;
-	GameInfoStruct.Size = size * size;
-	GameInfoStruct.GameTurn = BLACK_TURN; // 나중에 게임을 다시 시작하게 될 경우를 위한 초기화
-
+	GameInfoStruct.Size = size; // 나중에 게임을 다시 시작하게 될 경우를 위한 초기화
+	//gameTurn = BLACK_TURN;
 	othelloBoard.Empty();
-	othelloBoard.Init(EMPTY, size);
+	othelloBoard.Init(EMPTY, size * size);
 
-	OnGameInfoUpdated.Broadcast(TEXT("GameInfo"), GameInfoStruct);
+	OnGameInfoUpdated.Broadcast(TEXT("GameInfo"), GameInfoStruct); // 이벤트 브로드캐스트 해당 이벤트를 구독하는 클레스에 데이터를 전달함
 
 	//Cast<AServerGameStateBase>(GetWorld()->GetGameState())->SetData(time, size);
 	for (auto Iter = GetWorld()->GetControllerIterator(); Iter; ++Iter)
@@ -170,20 +170,25 @@ void AOthelloGameModeBase::OthelloNextTurn(int arrIndex)
 	//}
 }
 
-void AOthelloGameModeBase::OthelloChangeTurn()
+void AOthelloGameModeBase::ReverseTurn()
 {
-	GameInfoStruct.GameTurn = !GameInfoStruct.GameTurn; // not 연산으로 1은 0으로 0은 1로 바뀜 사실상 bool형 변수
+	BoardInfoStruct.Turn = !BoardInfoStruct.Turn;
+	OnTurnUpdated.Broadcast(BoardInfoStruct);
 }
 
 TArray<int8> AOthelloGameModeBase::OthelloChangeTurn(int32 pX, int32 pY)
 {
+	AOthelloPlayerController* Controller = Cast<AOthelloPlayerController>(GetWorld()->GetFirstPlayerController());
+
 	int white_score = 0;
 	int black_score = 0;
 	OthelloNativeClass logic;
 	TArray<int8> possiblePos;
 	possiblePos.Empty();
+	const int32 INDEX = (GameInfoStruct.Size * pY) + pX;
 
-	GameInfoStruct.GameTurn = !GameInfoStruct.GameTurn; // not 연산으로 1은 0으로 0은 1로 바뀜 사실상 bool형 변수
+	Controller->PutPieces(INDEX); // 각 클라에게 전송해야함
+
 	//seconds = limitTime;
 	//SetTime(seconds); // 타이머 위젯 하나 만들것
 
@@ -202,13 +207,15 @@ TArray<int8> AOthelloGameModeBase::OthelloChangeTurn(int32 pX, int32 pY)
 
 		//int32 pX = arrOthelloButton[i]->GetX(); // 이건 또 뭐야
 		//int32 pY = arrOthelloButton[i]->GetY();
-		// othelloBoard[i]->Changeturn(); // 이놈도 각 버튼의 턴을 바꿔주는데 보드에서 구현 해야함
-		if (logic.IsPutOthello(pX, pY, GameInfoStruct.GameTurn, othelloBoard) && othelloBoard[i] == EMPTY) // 착수 가능한 위치를 표시해주는 기능
+		// othelloBoard[i]->Changeturn(); // 이놈도 각 버튼의 턴을 바꿔주는데 보드에서 구현 해야함 이제 이 주석들은 필요 없음
+		if (logic.IsPutOthello(pX, pY, BoardInfoStruct.Turn, GameInfoStruct.Size, othelloBoard) && othelloBoard[i] == EMPTY) // 착수 가능한 위치를 표시해주는 기능
 		{
 			// othelloBoard[i]->PossiblePice();	 // 마찬가지로 보드에 구현할것 여기서는 리턴만 해줄거임
 			possiblePos.Add(i);
 		}
 	}
+	ReverseTurn();
+
 	return possiblePos;
 }
 

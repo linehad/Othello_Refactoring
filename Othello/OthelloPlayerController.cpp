@@ -19,22 +19,21 @@ void AOthelloPlayerController::BeginPlay()
 	// SetInputMode에 FInputModeGameAndUI를 넣어두면 게임과 UI모두 입력이 가능한 상태가 된다.
 	SetInputMode(FInputModeGameAndUI());
 
-	AOthelloGameModeBase* GameMode = GetWorld()->GetAuthGameMode<AOthelloGameModeBase>();
-	if (GameMode && HasAuthority()) //클라에서는 접근이 불가능하기 때문에 서버에서만 실행이 된다.
-	{
-		GameMode->OnGameInfoUpdated.AddDynamic(this, &AOthelloPlayerController::Server_GameInfoStructUpdated);
-	}
+	GameMode = GetWorld()->GetAuthGameMode<AOthelloGameModeBase>();
 }
 
 void AOthelloPlayerController::OthelloNextturn_Implementation(int ButtonIndex)
 {
 	AServerGameStateBase* OthelloState = Cast<AServerGameStateBase>(GetWorld()->GetGameState());
-	AOthelloGameModeBase* GameMode = GetWorld()->GetAuthGameMode<AOthelloGameModeBase>();
 	UGameBoard* OthelloBoard = Cast<UGameBoard>(CurrentWidget);
 	OthelloBoard->SetSeconds();
-	OthelloBoard->SetTime(OthelloState->GetLimitTime());
+	//OthelloBoard->SetTime(OthelloState->GetLimitTime());
 
 	GameMode->OthelloNextTurn(ButtonIndex);
+}
+
+void AOthelloPlayerController::PutPieces_Implementation(int index)
+{
 }
 
 void AOthelloPlayerController::ResetBoardWidget_Implementation(TSubclassOf<UUserWidget> NewWidgetClass, int32 size, int32 time)
@@ -87,37 +86,13 @@ void AOthelloPlayerController::ChangeWidget_Implementation(TSubclassOf<UUserWidg
 	}
 }
 
-void AOthelloPlayerController::SetOthelloArrIndex_Implementation(int x, int y)
+void AOthelloPlayerController::SetBoardCoordinate_Implementation(int x, int y)
 {
 	//othelloArrIndex = (Cast<AServerGameStateBase>(GetWorld()->GetGameState())->GetBoardSize() * y) + x;
+	GameMode->OthelloChangeTurn(x, y);
 }
 
-void AOthelloPlayerController::Server_GameInfoStructUpdated(FName PropertyName, const FGameInfoStruct& Data)
+void AOthelloPlayerController::Server_ReverseTurn_Implementation()
 {
-	if (HasAuthority())
-	{
-		if (PropertyName == TEXT("GameInfo"))
-		{
-			for (FConstPlayerControllerIterator Iterator = GetWorld()->GetPlayerControllerIterator(); Iterator; Iterator++)
-			{
-				AOthelloPlayerController* Controller = Cast<AOthelloPlayerController>(Iterator->Get());
-				Controller->Client_UpdateGameInfo(Data);
-			}
-			UE_LOG(LogTemp, Log, TEXT("server "));
-		}
-
-	}
-}
-
-void AOthelloPlayerController::Client_UpdateGameInfo_Implementation(const FGameInfoStruct& Data)
-{
-	GameInfoStruct = Data;
-	if (HasAuthority())
-	{
-		UE_LOG(LogTemp, Error, TEXT("server "));
-	}
-	else
-	{
-		UE_LOG(LogTemp, Error, TEXT("client "));
-	}
+	GameMode->ReverseTurn();
 }

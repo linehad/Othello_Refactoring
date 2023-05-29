@@ -4,7 +4,6 @@
 
 #include "CoreMinimal.h"
 #include "GameFramework/PlayerController.h"
-#include "GameInfoStruct.h"
 #include "OthelloPlayerController.generated.h"
 
 /**
@@ -22,7 +21,7 @@ private:
 	int beforeBlackScore = 0;
 	int beforeWhiteScore = 0;
 
-	FGameInfoStruct GameInfoStruct;
+	class AOthelloGameModeBase* GameMode;
 public:
 	virtual void BeginPlay() override;
 
@@ -42,6 +41,9 @@ public:
 		void OthelloNextturn(int index);
 	void OthelloNextturn_Implementation(int index);
 
+	UFUNCTION(Client, Reliable)
+		void PutPieces(int index);
+	void PutPieces_Implementation(int index);
 	/*위젯을 업데이트 하는 RPC 함수*/
 
 	UFUNCTION(Client, Reliable)
@@ -52,23 +54,18 @@ public:
 		void ChangeWidget(TSubclassOf<UUserWidget> NewWidgetClass);
 	void ChangeWidget_Implementation(TSubclassOf<UUserWidget> NewWidgetClass);
 
-	UFUNCTION()
-		void Server_GameInfoStructUpdated(FName PropertyName, const FGameInfoStruct& Data);
-
-	UFUNCTION(Client, Reliable)
-		void Client_UpdateGameInfo(const FGameInfoStruct& Data);
-	void Client_UpdateGameInfo_Implementation(const FGameInfoStruct& Data);
-
 public:
 	// 눌린 버튼을 설정할 함수
 	UFUNCTION(Server, Reliable)
-		void SetOthelloArrIndex(int x, int y);
-	void SetOthelloArrIndex_Implementation(int x, int y);
+		void SetBoardCoordinate(int x, int y);
+	void SetBoardCoordinate_Implementation(int x, int y);
+
+	UFUNCTION(Server, Reliable)
+		void Server_ReverseTurn();
+	void Server_ReverseTurn_Implementation();
 
 	UPROPERTY()
 		UUserWidget* CurrentWidget = nullptr;
 	UPROPERTY()
 		UUserWidget* BoardWidget = nullptr;
-	UFUNCTION()
-		const FGameInfoStruct GetGameInfoStruct() { return GameInfoStruct; }
 };

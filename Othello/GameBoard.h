@@ -2,6 +2,7 @@
 
 #include "CoreMinimal.h"
 #include "Blueprint/UserWidget.h"
+#include "GameInfoStruct.h"
 #include "GameBoard.generated.h"
 
 /**
@@ -12,8 +13,7 @@ class OTHELLO_API UGameBoard : public UUserWidget
 {
 	GENERATED_BODY()
 private:
-	int boardSize = 0;
-	int limitTime = 0;
+	FGameInfoStruct GameInfoStruct;
 
 	int seconds = 0;
 
@@ -97,13 +97,13 @@ public:
 
 	// 1차원 배열을 2차월 배열 처럼 쓰기 위한 함수
 	UFUNCTION()
-		inline int16 Board_index(int x, int y) { return (boardSize * y) + x; }
+		inline int16 Board_index(int x, int y) { return (GameInfoStruct.Size * y) + x; }
 
 	// 점수를 계산하는 함수
 	UFUNCTION()
 		void SetScore(int BScore, int WScore);
 	UFUNCTION()
-		void SetSeconds() { seconds = limitTime; }
+		void SetSeconds() { seconds = GameInfoStruct.Time; }
 
 	// 시간을 정하는 함수
 	UFUNCTION()
@@ -127,7 +127,4 @@ public:
 		void SetwhiteScore(int score) { beforWhiteScore = score; }
 	UFUNCTION()
 		void SetblackScore(int score) { beforBlackScore = score; }
-
-	inline void SetBoardSize(int size) { boardSize = size; }
-	inline int GetBoardSize() { return boardSize; }
 };

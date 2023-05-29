@@ -5,20 +5,32 @@
 #include "CoreMinimal.h"
 #include "GameInfoStruct.generated.h"
 
-// 컴파일러가 C언어를 읽는 것처럼 동작함 구조체 전방선언을 하거나 구조체가 맨위로 올라와야 함
-USTRUCT()
-struct FGameInfoStruct
+USTRUCT(BlueprintType)
+struct OTHELLO_API FGameInfoStruct
 {
-	GENERATED_BODY()
+	GENERATED_USTRUCT_BODY()
 
 public:
-	int32 Size = 0;
-	int32 Time = 0;
-	int8 GameTurn = 0;
+	UPROPERTY()
+		int32 Size;
+
+	UPROPERTY()
+		int32 Time;
+
+	FGameInfoStruct()
+		: Size(0), Time(0)
+	{
+	}
 };
 
-class OTHELLO_API GameInfoStruct
+USTRUCT(BlueprintType)
+struct OTHELLO_API FBoardInfoStruct
 {
-public:
+	GENERATED_USTRUCT_BODY()
 
+public:
+	UPROPERTY()
+		TArray <int8> BoardArr;
+	UPROPERTY()
+		bool Turn = true;
 };

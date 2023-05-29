@@ -1,5 +1,7 @@
 #include "OthelloPices_UserWidget.h"
 #include "OthelloPlayerController.h"
+#include "ServerGameStateBase.h"
+
 #include <Components/Button.h>
 #include <Components/Image.h>
 
@@ -8,21 +10,35 @@ void UOthelloPices_UserWidget::SetData(int y, int x)
 	xPos = x;
 	yPos = y;
 	OthlloPiece_Button->OnClicked.AddDynamic(this, &UOthelloPices_UserWidget::OnBtnClick);
+	GameStateBase = Cast<AServerGameStateBase>(GetWorld()->GetGameState());
 }
 
 void UOthelloPices_UserWidget::OnBtnClick()
 {
+	AOthelloPlayerController* Controller = Cast<AOthelloPlayerController>(GetWorld()->GetFirstPlayerController());
+
 	OthlloPiece_Image->SetVisibility(ESlateVisibility::HitTestInvisible);
 	OthlloPiece_Button->SetVisibility(ESlateVisibility::HitTestInvisible);
 
-	Cast<AOthelloPlayerController>(GetWorld()->GetFirstPlayerController())->SetOthelloArrIndex(xPos, yPos);
-	if (gameTurn == BLACK_TURN && piece == EMPTY)
+	Controller->SetBoardCoordinate(xPos, yPos);
+
+	if (Controller->HasAuthority())
+	{
+		UE_LOG(LogTemp, Log, TEXT("server"));
+	}
+	else
+	{
+		bool aaturn = GameStateBase->GetGameTurn();
+		UE_LOG(LogTemp, Log, TEXT("client"));
+	}
+
+	if (GameStateBase->GetGameTurn() == BLACK_TURN && piece == EMPTY)
 	{
 		bhit = true;
 		OthlloPiece_Image->SetBrushFromTexture(BlackImage, true);
 		piece = BLACK_PIECE;
 	}
-	else if (gameTurn == WHITE_TURN && piece == EMPTY)
+	else if (GameStateBase->GetGameTurn() == WHITE_TURN && piece == EMPTY)
 	{
 		bhit = true;
 		OthlloPiece_Image->SetBrushFromTexture(WhiteImage, true);
@@ -35,13 +51,31 @@ void UOthelloPices_UserWidget::ReversePiece()
 	OthlloPiece_Image->SetVisibility(ESlateVisibility::HitTestInvisible);
 	OthlloPiece_Button->SetVisibility(ESlateVisibility::HitTestInvisible);
 
-	if (gameTurn == BLACK_TURN)
+	if (GameStateBase->GetGameTurn() == BLACK_TURN)
 	{
 		OthlloPiece_Image->SetBrushFromTexture(BlackImage, true); // 검은색 돌을 둠
 		piece = BLACK_PIECE;
 	}
-	else if (gameTurn == WHITE_TURN)
+	else if (GameStateBase->GetGameTurn() == WHITE_TURN)
 	{
+		OthlloPiece_Image->SetBrushFromTexture(WhiteImage, true);
+		piece = WHITE_PIECE;
+	}
+}
+
+void UOthelloPices_UserWidget::StartPlacement(bool turn)
+{
+	OthlloPiece_Image->SetVisibility(ESlateVisibility::HitTestInvisible);
+	OthlloPiece_Button->SetVisibility(ESlateVisibility::HitTestInvisible);
+	if (turn == BLACK_TURN && piece == EMPTY)
+	{
+		bhit = true;
+		OthlloPiece_Image->SetBrushFromTexture(BlackImage, true);
+		piece = BLACK_PIECE;
+	}
+	else if (turn == WHITE_TURN && piece == EMPTY)
+	{
+		bhit = true;
 		OthlloPiece_Image->SetBrushFromTexture(WhiteImage, true);
 		piece = WHITE_PIECE;
 	}
@@ -55,7 +89,7 @@ void UOthelloPices_UserWidget::PossiblePiece()
 	// 서버일 때 흑돌
 	if (GetWorld()->GetFirstPlayerController()->GetLocalRole() == ROLE_Authority)
 	{
-		if (gameTurn == BLACK_TURN && piece == EMPTY)
+		if (GameStateBase->GetGameTurn() == BLACK_TURN && piece == EMPTY)
 		{
 			OthlloPiece_Image->SetBrushFromTexture(Preview_BlackImage, true);
 			OthlloPiece_Button->SetVisibility(ESlateVisibility::Visible);
@@ -66,7 +100,7 @@ void UOthelloPices_UserWidget::PossiblePiece()
 	// 클라 일 때는 백돌!
 	if (GetWorld()->GetFirstPlayerController()->GetRemoteRole() == ROLE_Authority)
 	{
-		if (gameTurn == WHITE_TURN && piece == EMPTY)
+		if (GameStateBase->GetGameTurn() == WHITE_TURN && piece == EMPTY)
 		{
 			OthlloPiece_Image->SetBrushFromTexture(Preview_WhiteImage, true);
 			OthlloPiece_Button->SetVisibility(ESlateVisibility::Visible);
@@ -89,6 +123,5 @@ void UOthelloPices_UserWidget::UnPossiblePiece()
 
 void UOthelloPices_UserWidget::ChangeTurn()
 {
-	gameTurn = !gameTurn;
 	OthlloPiece_Button->SetVisibility(ESlateVisibility::HitTestInvisible);
 }

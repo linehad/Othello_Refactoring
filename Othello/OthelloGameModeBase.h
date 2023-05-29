@@ -7,6 +7,7 @@
 
 
 DECLARE_DYNAMIC_MULTICAST_DELEGATE_TwoParams(FGameInfoStructUpdated, FName, PropertyName, const FGameInfoStruct&, Data);
+DECLARE_DYNAMIC_MULTICAST_DELEGATE_OneParam(FBoardUpdatedEvent, const FBoardInfoStruct&, BoardInfoStruct);
 
 UCLASS()
 class OTHELLO_API AOthelloGameModeBase : public AGameModeBase
@@ -14,7 +15,10 @@ class OTHELLO_API AOthelloGameModeBase : public AGameModeBase
 	GENERATED_BODY()
 
 private:
+	UPROPERTY()
 	FGameInfoStruct GameInfoStruct;
+	UPROPERTY()
+		FBoardInfoStruct BoardInfoStruct;
 	//UPROPERTY(BlueprintReadWrite, Category = "GameInfo")
 	int16 changeCount = 0;
 	const int16 ENTRY = 0;
@@ -41,14 +45,19 @@ public:
 		void OthelloNextTurn(int arrIndex);
 
 	// 게임의 턴을 뒤집는 함수
-		void OthelloChangeTurn(); // 시간 초가 넘어가는 등의 이유로 턴이 넘어 가야 할 경우 호출
+		void ReverseTurn(); // 시간 초가 넘어가는 등의 이유로 턴이 넘어 가야 할 경우 호출
 
 	UFUNCTION()
 		TArray<int8> OthelloChangeTurn(int32 pX, int32 py); // 게임턴에 따라 현재 플레이어 색의 돌의 착수 가능 위치를 표시해주는 함수
 
 	void SetOthelloArrIndex(int16 index) { othelloArrIndex = index; }
 
+	// 이벤트 멤버 변수들
+	UPROPERTY()
 	FGameInfoStructUpdated OnGameInfoUpdated;
+
+	UPROPERTY()
+		FBoardUpdatedEvent OnTurnUpdated;
 protected:
 	virtual void BeginPlay() override;
 	virtual void PostLogin(APlayerController* NewPlayer) override;
