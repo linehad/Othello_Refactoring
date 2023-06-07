@@ -5,153 +5,42 @@
 #include "OthelloPices_UserWidget.h"
 #include "OthelloNativeClass.h"
 
-#include "Kismet/GameplayStatics.h"
-
 #include <Components/Button.h>
 #include <Components/Image.h>
 #include <Components/GridPanel.h>
 #include <Components/UniformGridPanel.h>
-#include "Animation/WidgetAnimation.h"
 
 void UGameBoard::NativeConstruct()
 {
 	Super::NativeConstruct();
 
-	// 텍스쳐 매핑
-	BigFont.Empty();
-	for (int i = 0; i < 10; i++)
+	GameState = Cast<AServerGameStateBase>(GetWorld()->GetGameState());
+	if (GameState) // 스테이트에서 전달해주는 구조체를 통해 착수이벤트 바인딩
 	{
-		FString a = ".";
-		FString BigFontAddress = TEXT("/Game/Font/BigFont/") + FString::FromInt(i) + a + FString::FromInt(i);
-		BigFont.Add(LoadObject<UTexture2D>(NULL, *BigFontAddress, NULL, LOAD_None, NULL));
-	}
-
-	Time_Image0->SetBrushFromTexture(BigFont[0], true);
-	Time_Image1->SetBrushFromTexture(BigFont[0], true);
-
-	White_Image0->SetBrushFromTexture(BigFont[2], true);
-	White_Image1->SetBrushFromTexture(BigFont[0], true);
-
-	Black_Image0->SetBrushFromTexture(BigFont[2], true);
-	Black_Image1->SetBrushFromTexture(BigFont[0], true);
-}
-
-void UGameBoard::SetTime(int time)
-{
-	Time_Image0->SetBrushFromTexture(BigFont[time % 10], true);
-	Time_Image1->SetBrushFromTexture(BigFont[time / 10], true);
-}
-
-void UGameBoard::GameOver(int8 GameWinner)
-{
-	Quit_Button->OnClicked.AddDynamic(this, &UGameBoard::QuitGame);
-
-	GameOver_GridPanel->SetVisibility(ESlateVisibility::SelfHitTestInvisible);
-	if (GameWinner == DRAW)
-	{
-		WinBlack_Image->SetVisibility(ESlateVisibility::HitTestInvisible);
-		WinWhite_Image->SetVisibility(ESlateVisibility::HitTestInvisible);
-	}
-	else if (GameWinner == BLACK)
-	{
-		WinBlack_Image->SetVisibility(ESlateVisibility::HitTestInvisible);
-	}
-	else if (GameWinner == WHITE)
-	{
-		WinWhite_Image->SetVisibility(ESlateVisibility::HitTestInvisible);
-	}
-
-}
-
-void UGameBoard::StartTimer()
-{
-	// 타이머 핸들러를 통해 시간을 업데이트한다.
-	FTimerHandle timerHandle;
-	GetWorld()->GetTimerManager().SetTimer(timerHandle, this, &UGameBoard::CountDown, 1.f, true, 0.0);
-	seconds = GameInfoStruct.Time;
-}
-
-void UGameBoard::CountDown()
-{
-	bool flag = false;
-	if (seconds != 0)
-	{
-		seconds--;
-		SetTime(seconds);
-		PlayAnimation(Time_Image0_Anim);
-	}
-	if (seconds % 10 == 0)
-	{
-		if (seconds == 0)
-		{
-			//OthelloChangeTurn();
-		}
-		else
-		{
-			PlayAnimation(Time_Image1_Anim);
-		}
-
-	}
-}
-
-void UGameBoard::QuitGame()
-{
-	UKismetSystemLibrary::QuitGame(GetWorld(), GetWorld()->GetFirstPlayerController(), EQuitPreference::Quit, true);
-}
-
-
-void UGameBoard::NextTurn()
-{
-	//Cast<AOthelloPlayerController>(GetWorld()->GetFirstPlayerController())->SetOthelloNextTurn();
-}
-
-void UGameBoard::SetScore(int black_score, int white_score)
-{
-	// 점수 출력 부
-	if (beforBlackScore % 10 != black_score % 10)
-	{
-		PlayAnimation(Black_Image0_Anim);
-		Black_Image0->SetBrushFromTexture(BigFont[black_score % 10], true);
-	}
-
-	if (beforBlackScore / 10 != black_score / 10)
-	{
-		PlayAnimation(Black_Image1_Anim);
-		Black_Image1->SetBrushFromTexture(BigFont[black_score / 10], true);
-	}
-
-	if (beforWhiteScore % 10 != white_score % 10)
-	{
-		PlayAnimation(White_Image0_Anim);
-		White_Image0->SetBrushFromTexture(BigFont[white_score % 10], true);
-	}
-	if (beforWhiteScore / 10 != white_score / 10)
-	{
-		PlayAnimation(White_Image1_Anim);
-		White_Image1->SetBrushFromTexture(BigFont[white_score / 10], true);
+		GameState->OnPlacementEvent.AddDynamic(this, &UGameBoard::Placement);
 	}
 }
 
 void UGameBoard::StartSet()
 {
-	GameInfoStruct = Cast<AServerGameStateBase>(GetWorld()->GetGameState())->GetGameInfoStruct();
-	seconds = GameInfoStruct.Time;
+	GameInfoStruct = GameState->GetGameInfoStruct();
+
 	// 버튼에 정보 넘겨주고 함수와 묶기
 	if (OthelloButton)
 	{
-		int arr_index = 0;
+		int index = 0;
 
 		arrOthelloButton.Init(nullptr, GameInfoStruct.Size * GameInfoStruct.Size);
 		for (int i = 0; i < GameInfoStruct.Size; i++)
 		{
 			for (int j = 0; j < GameInfoStruct.Size; j++)
 			{
-				UUserWidget* widget = CreateWidget(this, OthelloButton);
-				Board_UniformGridPanel->AddChildToUniformGrid(widget, i, j);
-				arrOthelloButton[arr_index] = Cast<UOthelloPices_UserWidget>(widget);
-				arrOthelloButton[arr_index]->SetData(i, j);
-				arrOthelloButton[arr_index]->OthlloPiece_Button->OnClicked.AddDynamic(this, &UGameBoard::NextTurn);
-				arr_index++;
+				UUserWidget* widget = CreateWidget(this, OthelloButton); // 버튼 위젯을 만듬
+				Board_UniformGridPanel->AddChildToUniformGrid(widget, i, j); // 만들어진 버튼 위젯을 그리드 패널에 추가함
+				arrOthelloButton[index] = Cast<UOthelloPices_UserWidget>(widget); // 만들어진 버튼 위젯을 관리하기 위해 배열에 추가함
+				arrOthelloButton[index]->SetData(i, j); // 원 클릭 이벤트 바인딩과 버튼의 좌표를 설정함
+				arrOthelloButton[index]->UnPossiblePiece(); // 버튼이 클릭 되지 않아야 함 다 비활성화 해줌
+				index++;
 			}
 		}
 	}
@@ -159,25 +48,90 @@ void UGameBoard::StartSet()
 	// 가운데 돌 두는 기능
 	int y = GameInfoStruct.Size / 2;
 	int x = (GameInfoStruct.Size / 2 - 1);
-	arrOthelloButton[Board_index(x, y)]->StartPlacement(BLACK_TURN);
-	arrOthelloButton[Board_index(x + 1, y)]->StartPlacement(WHITE_TURN);
-	arrOthelloButton[Board_index(x + 1, y - 1)]->StartPlacement(BLACK_TURN);
-	arrOthelloButton[Board_index(x, y -1)]->StartPlacement(WHITE_TURN);
-	//int index = 0;
+	Placement(x, y, BLACK_TURN);
+	Placement(x + 1, y - 1, BLACK_TURN);
+	Placement(x + 1, y, WHITE_TURN);
+	Placement(x, y - 1, WHITE_TURN);
+}
 
-	//for (int i = 0; i < 2; i++)
-	//{
-	//	index = Board_index(x++, y++);
-	//	arrOthelloButton[index]->ReversePiece(); // 백돌 놓음
-	//}
-	//for (int i = 0; i < 2; i++)
-	//{
-	//	y = boardSize / 2 - 1;
-	//	x = (boardSize / 2);
-	//	index = Board_index(x--, y++);
-	//	arrOthelloButton[index]->SetGameTurn(BLACK_TURN); // 각돌에는 턴을 세는 변수가 있어서 바꿔주어야 함
-	//	arrOthelloButton[index]->ReversePiece(); // 흑돌 놓음
-	//	arrOthelloButton[index]->SetGameTurn(WHITE_TURN); // 바꾼 턴 원위치
-	//}
+void UGameBoard::PossiblePiece(const FBoardInfoStruct& Data)
+{
+	// 착수 가능한 위치를 표시함
+	for (int i = 0; i < Data.PlacementPosArr.Num(); i++)
+	{
+		int index = Data.PlacementPosArr[i];
+		if (GetWorld()->GetFirstPlayerController()->HasAuthority())
+		{
+			arrOthelloButton[index]->PossiblePiece(SERVER_PLAY);
+		}
+		else
+		{
+			arrOthelloButton[index]->PossiblePiece(CLIENT_PLAY);
+		}
+	}
+}
 
+void UGameBoard::Placement(FName EventName, const FBoardInfoStruct& Data)
+{
+	const int32 ClickPos = Data.Index;
+
+	for (int i = 0; i < LastBoardInfo.PlacementPosArr.Num(); i++)
+	{
+		int32 index = LastBoardInfo.PlacementPosArr[i];
+		if (index != ClickPos)
+		{
+			arrOthelloButton[index]->UnPossiblePiece();
+		}
+	}
+	
+	
+	if (EventName == TEXT("Placement"))
+	{
+		Placement(Data.Index, !Data.Turn); // GameMode에서 미리 턴을 뒤집었기 때문에 현재 턴은 다르다!
+
+		// 착수 위치에 기반해서 돌을 실제로 뒤집어줌
+		for(int i=0;i< Data.ReversePosArr.Num();i++)
+		{
+			int index = Data.ReversePosArr[i];
+			arrOthelloButton[index]->Placement(!Data.Turn);
+		}
+
+		// 착수 가능한 위치를 표시함
+		PossiblePiece(Data);
+	}
+	// 제한시간이 다 지나가면 실행됨
+	else if (EventName == TEXT("TimeOut"))
+	{
+		// 착수 가능한 위치를 표시함
+		PossiblePiece(Data);
+	}
+	else if (EventName == TEXT("TurnOut")) // 더 이상 둘 수 없기에 그냥 턴이 넘어갔다. 따라서 미리 뒤집는 과정이 없어짐
+	{
+		// 착수 가능한 위치를 표시함
+		for (int i = 0; i < Data.PlacementPosArr.Num(); i++)
+		{
+			int index = Data.PlacementPosArr[i];
+			arrOthelloButton[index]->PossiblePiece(SERVER_PLAY);
+		}
+	}
+	// 게임 시작시 최초로 실행됨
+	else if (EventName == TEXT("SetStart"))
+	{
+		for (int i = 0; i < Data.PlacementPosArr.Num(); i++)
+		{
+			int index = Data.PlacementPosArr[i];
+			arrOthelloButton[index]->PossiblePiece(SET_START);
+		}
+	}
+	LastBoardInfo = Data;
+}
+
+void UGameBoard::Placement(int32 index, bool turn)
+{
+	arrOthelloButton[index]->Placement(turn);
+}
+
+void UGameBoard::Placement(int8 x, int8 y, bool turn)
+{
+	arrOthelloButton[Board_index(x, y)]->Placement(turn);
 }

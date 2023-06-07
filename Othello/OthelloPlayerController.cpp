@@ -5,6 +5,7 @@
 #include "GameInfoStruct.h"
 #include "ServerGameStateBase.h"
 #include "GameBoard.h"
+#include "ScoreUserWidget.h"
 #include "OthelloPices_UserWidget.h"
 #include "OthelloGameModeBase.h"
 
@@ -20,20 +21,7 @@ void AOthelloPlayerController::BeginPlay()
 	SetInputMode(FInputModeGameAndUI());
 
 	GameMode = GetWorld()->GetAuthGameMode<AOthelloGameModeBase>();
-}
-
-void AOthelloPlayerController::OthelloNextturn_Implementation(int ButtonIndex)
-{
-	AServerGameStateBase* OthelloState = Cast<AServerGameStateBase>(GetWorld()->GetGameState());
-	UGameBoard* OthelloBoard = Cast<UGameBoard>(CurrentWidget);
-	OthelloBoard->SetSeconds();
-	//OthelloBoard->SetTime(OthelloState->GetLimitTime());
-
-	GameMode->OthelloNextTurn(ButtonIndex);
-}
-
-void AOthelloPlayerController::PutPieces_Implementation(int index)
-{
+	GameState= Cast<AServerGameStateBase>(GetWorld()->GetGameState());
 }
 
 void AOthelloPlayerController::ResetBoardWidget_Implementation(TSubclassOf<UUserWidget> NewWidgetClass, int32 size, int32 time)
@@ -63,6 +51,26 @@ void AOthelloPlayerController::ResetBoardWidget_Implementation(TSubclassOf<UUser
 	}
 }
 
+void AOthelloPlayerController::AddScoreWidget_Implementation(TSubclassOf<UUserWidget> NewWidgetClass)
+{
+	if (ScoreWidget != nullptr)
+	{
+		ScoreWidget->RemoveFromViewport();
+		ScoreWidget = nullptr;
+	}
+
+	if (NewWidgetClass != nullptr)
+	{
+		ScoreWidget = CreateWidget(GetWorld(), NewWidgetClass);
+
+		if (ScoreWidget != nullptr)
+		{
+			ScoreWidget->AddToViewport();
+			Cast<UScoreUserWidget>(ScoreWidget)->StartTimer();
+		}
+	}
+}
+
 void AOthelloPlayerController::ChangeWidget_Implementation(TSubclassOf<UUserWidget> NewWidgetClass)
 {
 	if (CurrentWidget != nullptr)
@@ -79,20 +87,17 @@ void AOthelloPlayerController::ChangeWidget_Implementation(TSubclassOf<UUserWidg
 			CurrentWidget->AddToViewport();
 		}
 	}
-
-	if (CurrentWidget != nullptr && CurrentWidget == Cast<UGameBoard>(CurrentWidget))
-	{
-		Cast<UGameBoard>(CurrentWidget)->StartTimer();
-	}
 }
 
-void AOthelloPlayerController::SetBoardCoordinate_Implementation(int x, int y)
+void AOthelloPlayerController::Server_SetBoardCoordinate_Implementation(int x, int y)
 {
-	//othelloArrIndex = (Cast<AServerGameStateBase>(GetWorld()->GetGameState())->GetBoardSize() * y) + x;
-	GameMode->OthelloChangeTurn(x, y);
+	const int32 boardIndex = (GameState->GetGameInfoStruct().Size * y) + x;
+
+	//GameState->SetIndex(boardIndex);
+	GameMode->Placement(x, y);
 }
 
-void AOthelloPlayerController::Server_ReverseTurn_Implementation()
+void AOthelloPlayerController::Server_TimeOut_Implementation()
 {
-	GameMode->ReverseTurn();
+	GameMode->TimeOut();
 }

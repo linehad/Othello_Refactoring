@@ -7,7 +7,7 @@
 
 
 DECLARE_DYNAMIC_MULTICAST_DELEGATE_TwoParams(FGameInfoStructUpdated, FName, PropertyName, const FGameInfoStruct&, Data);
-DECLARE_DYNAMIC_MULTICAST_DELEGATE_OneParam(FBoardUpdatedEvent, const FBoardInfoStruct&, BoardInfoStruct);
+DECLARE_DYNAMIC_MULTICAST_DELEGATE_TwoParams(FBoardUpdatedEvent, FName, PropertyName, const FBoardInfoStruct&, BoardInfoStruct);
 
 UCLASS()
 class OTHELLO_API AOthelloGameModeBase : public AGameModeBase
@@ -19,12 +19,7 @@ private:
 	FGameInfoStruct GameInfoStruct;
 	UPROPERTY()
 		FBoardInfoStruct BoardInfoStruct;
-	//UPROPERTY(BlueprintReadWrite, Category = "GameInfo")
-	int16 changeCount = 0;
-	const int16 ENTRY = 0;
 
-		int16 beforeIndex = 0;
-		bool bcheckTurn = false;
 		int16 othelloArrIndex; // 눌린 위치를 저장할 변수
 
 	UPROPERTY()
@@ -33,22 +28,17 @@ public:
 	UFUNCTION(BlueprintCallable, Category = "UMG_Game")
 	void SetStartingWidget(TSubclassOf<UUserWidget> StartingWidget){ StartingWidgetClass = StartingWidget;	}
 
-	// 다음 턴이 되었을 때 실행 할 함수
-	UFUNCTION(Server, Reliable)
-		void SetOthelloNextturn();
-	void SetOthelloNextturn_Implementation();
-
 	// 처음 시작시 보드의 사이즈와 제한 시간을 설정하는 함수
 		void SetGameData(int size, int time);
-
-	// 다음 턴이 되었을 때 실행 할 함수
-		void OthelloNextTurn(int arrIndex);
 
 	// 게임의 턴을 뒤집는 함수
 		void ReverseTurn(); // 시간 초가 넘어가는 등의 이유로 턴이 넘어 가야 할 경우 호출
 
 	UFUNCTION()
-		TArray<int8> OthelloChangeTurn(int32 pX, int32 py); // 게임턴에 따라 현재 플레이어 색의 돌의 착수 가능 위치를 표시해주는 함수
+		void Placement(int32 pX, int32 py); // 착수 되었을 때 실행되는 함수
+
+	UFUNCTION()
+		void TimeOut(); // 착수 되었을 때 실행되는 함수
 
 	void SetOthelloArrIndex(int16 index) { othelloArrIndex = index; }
 
@@ -68,7 +58,8 @@ protected:
 		TSubclassOf<UUserWidget> MainWidgetClass;
 	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = "UMG_Game")
 		TSubclassOf<UUserWidget> BoardWidgetClass;
-
+	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = "UMG_Game")
+		TSubclassOf<UUserWidget> ScoreWidgetClass;
 	UPROPERTY()
 		UUserWidget* CurrentWidget;
 };

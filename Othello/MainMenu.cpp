@@ -90,7 +90,7 @@ void UMainMenu::SizeButton3_Callback()
 
 void UMainMenu::TimeButton0_Callback()
 {
-	time = 30;
+	time = 5;
 	Time_Button_0->SetIsEnabled(false); Time_Button_1->SetIsEnabled(true); Time_Button_2->SetIsEnabled(true); Time_Button_3->SetIsEnabled(true);
 	bTimeButton = true;
 	TimeButtonActivate();

@@ -1,10 +1,9 @@
 #include "OthelloNativeClass.h"
 #include "OthelloPices_UserWidget.h"
 
-// 이것도 개문제 연산만 해서 뒤집어야 되는 애들의 위치만 넘겨줘야됨
-TArray <int32> OthelloNativeClass::ChangePices(int x, int y, int8 turn, int16 row, TArray <int32>board)
+TArray <int32> OthelloNativeClass::ChangePices(int x, int y, int8 turn, int16 size, TArray <int32>board)
 {
-	int32 boardSize = row;
+	int32 boardSize = size;
 	int8 piece = turn == BLACK_TURN ? BLACK_PIECE : WHITE_PIECE;
 	TArray <int32>reverseIndex;
 	reverseIndex.Empty();
@@ -15,7 +14,8 @@ TArray <int32> OthelloNativeClass::ChangePices(int x, int y, int8 turn, int16 ro
 		int ny = y + arr_dY[i];
 		bool flag = false; // 자신의 색을 만나면 true 그 사이에 있는 것들을 뒤집는다.
 
-		while (nx >= 0 && ny >= 0 && nx < boardSize && ny < boardSize && board[Board_index(nx, ny, boardSize)] != 0)
+		while (nx >= 0 && ny >= 0 && nx < boardSize && ny < boardSize &&
+			board[Board_index(nx, ny, boardSize)] != 0)
 		{
 			if (board[Board_index(nx, ny, boardSize)] == piece)
 			{
@@ -32,9 +32,7 @@ TArray <int32> OthelloNativeClass::ChangePices(int x, int y, int8 turn, int16 ro
 			{
 				break;
 			}
-			// 실제로 뒤집는다.
-			//arrOthelloButton[Board_index(nx, ny, boardSize)]->ReversePiece(); // 이 부분을 뒤집어야 할 위치를 저장해서 리턴해줘야 한다
-			reverseIndex.Add(Board_index(nx, ny, boardSize));
+			reverseIndex.Add(Board_index(nx, ny, boardSize)); // 뒤집어야 할 위치를 추가함
 			nx -= arr_dX[i];
 			ny -= arr_dY[i];
 		}
@@ -43,31 +41,42 @@ TArray <int32> OthelloNativeClass::ChangePices(int x, int y, int8 turn, int16 ro
 }
 
 // 둘수 있는 위치를 표시해주는 함수
-bool OthelloNativeClass::IsPutOthello(int x, int y, int8 turn, int16 row, TArray <int32>board)
+TArray <int32> OthelloNativeClass::IsPutOthello(int8 turn, int16 size, TArray <int32>board)
 {
-	int32 boardSize = row;
+	int32 boardSize = size;
 	int8 piece = turn == BLACK_TURN ? BLACK_PIECE : WHITE_PIECE;
+	TArray <int32> MoveIndex;
+	MoveIndex.Empty();
 
-	for (int i = 0; i < DIRECTUIN; i++)
+	for (int col = 0; col < boardSize; col++)
 	{
-		int nx = x + arr_dX[i];
-		int ny = y + arr_dY[i];
-		while (nx >= 0 && ny >= 0 && nx < boardSize && ny < boardSize
-			&& board[Board_index(nx, ny, boardSize)] != 0) // 보드 안에 돌이 들어있을 때 반복
+		for (int row = 0; row < boardSize; row++)
 		{
+			for (int k = 0; k < DIRECTUIN; k++)
+			{
+				int nx = row + arr_dX[k];
+				int ny = col + arr_dY[k];
 
-			// 바로 다음돌이 내 색이랑 같을 경우
-			if (piece == board[Board_index(x + arr_dX[i], y + arr_dY[i], boardSize)])
-			{
-				break;
+				while (nx >= 0 && ny >= 0 && nx < boardSize && ny < boardSize && // 배열 바깥으로 나가지 않고
+					board[Board_index(row, col, boardSize)] == EMPTY && // 현재 위치가 비어 있고
+					board[Board_index(nx, ny, boardSize)] != EMPTY) // 탐색 위치에 돌이 있다면
+				{
+					// 바로 다음돌이 내 색이랑 같을 경우
+					if (piece == board[Board_index(row + arr_dX[k], col + arr_dY[k], boardSize)])
+					{
+						break;
+					}
+					else if (board[Board_index(nx, ny, boardSize)] == piece)
+					{
+						MoveIndex.Add(Board_index(row, col, boardSize));
+						break;
+					}
+					nx += arr_dX[k];
+					ny += arr_dY[k];
+				}
+			
 			}
-			else if (board[Board_index(nx, ny, boardSize)] == piece)
-			{
-				return true;
-			}
-			nx += arr_dX[i];
-			ny += arr_dY[i];
 		}
 	}
-	return false;
+	return MoveIndex;
 }

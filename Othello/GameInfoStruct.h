@@ -30,7 +30,15 @@ struct OTHELLO_API FBoardInfoStruct
 
 public:
 	UPROPERTY()
-		TArray <int8> BoardArr;
+		TArray <int32> PlacementPosArr;
 	UPROPERTY()
-		bool Turn = true;
+		TArray <int32> ReversePosArr;
+	UPROPERTY()
+		bool Turn = false;
+	UPROPERTY()
+		int32 Index = -1;
+	UPROPERTY()
+		int32 whiteScore = 0;
+	UPROPERTY()
+		int32 blackScore = 0;
 };

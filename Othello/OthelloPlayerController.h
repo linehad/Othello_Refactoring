@@ -22,11 +22,16 @@ private:
 	int beforeWhiteScore = 0;
 
 	class AOthelloGameModeBase* GameMode;
+	class AServerGameStateBase* GameState;
+
+	UPROPERTY()
+		UUserWidget* CurrentWidget = nullptr;
+	UPROPERTY()
+		UUserWidget* BoardWidget = nullptr;
+	UPROPERTY()
+		UUserWidget* ScoreWidget = nullptr;
 public:
 	virtual void BeginPlay() override;
-
-	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = "UMG_Game")
-		TSubclassOf<UUserWidget> StartingWidget = nullptr;
 
 	UFUNCTION()
 		int GetBeforeWhiteScore() { return beforeWhiteScore; }
@@ -37,18 +42,15 @@ public:
 	UFUNCTION()
 		int GetBlackScore() { return blackScore; }
 
-	UFUNCTION(Client, Reliable)
-		void OthelloNextturn(int index);
-	void OthelloNextturn_Implementation(int index);
-
-	UFUNCTION(Client, Reliable)
-		void PutPieces(int index);
-	void PutPieces_Implementation(int index);
 	/*위젯을 업데이트 하는 RPC 함수*/
 
 	UFUNCTION(Client, Reliable)
 		void ResetBoardWidget(TSubclassOf<UUserWidget> NewWidgetClass, int32 size, int32 time);
 	void ResetBoardWidget_Implementation(TSubclassOf<UUserWidget> NewWidgetClass, int32 size, int32 time);
+
+	UFUNCTION(Client, Reliable)
+		void AddScoreWidget(TSubclassOf<UUserWidget> NewWidgetClass);
+	void AddScoreWidget_Implementation(TSubclassOf<UUserWidget> NewWidgetClass);
 
 	UFUNCTION(Client, Reliable)
 		void ChangeWidget(TSubclassOf<UUserWidget> NewWidgetClass);
@@ -57,15 +59,11 @@ public:
 public:
 	// 눌린 버튼을 설정할 함수
 	UFUNCTION(Server, Reliable)
-		void SetBoardCoordinate(int x, int y);
-	void SetBoardCoordinate_Implementation(int x, int y);
+		void Server_SetBoardCoordinate(int x, int y);
+	void Server_SetBoardCoordinate_Implementation(int x, int y);
 
+	// 시간이 초과되면 실행되는 함수
 	UFUNCTION(Server, Reliable)
-		void Server_ReverseTurn();
-	void Server_ReverseTurn_Implementation();
-
-	UPROPERTY()
-		UUserWidget* CurrentWidget = nullptr;
-	UPROPERTY()
-		UUserWidget* BoardWidget = nullptr;
+		void Server_TimeOut();
+	void Server_TimeOut_Implementation();
 };

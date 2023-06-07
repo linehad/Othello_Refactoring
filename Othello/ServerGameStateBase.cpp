@@ -8,11 +8,18 @@
 #include <Blueprint/UserWidget.h>
 #include <Components/Image.h>
 
+#include "Engine.h"
 #include "Net/UnrealNetwork.h"
 
 AServerGameStateBase::AServerGameStateBase()
 {
 	bReplicates = true;
+}
+
+void AServerGameStateBase::GetLifetimeReplicatedProps(TArray<FLifetimeProperty>& OutLifetimeProps) const
+{
+	Super::GetLifetimeReplicatedProps(OutLifetimeProps);
+	DOREPLIFETIME(AServerGameStateBase, BoardInfoStruct);
 }
 
 void AServerGameStateBase::BindEvent()
@@ -38,20 +45,22 @@ void AServerGameStateBase::Server_GameInfoStructUpdated(FName PropertyName, cons
 	}
 }
 
+
 void AServerGameStateBase::Multicast_GameInfoStruct_Implementation(const FGameInfoStruct& Data)
 {
 	GameInfoStruct = Data;
 }
 
-void AServerGameStateBase::Server_OnTurnUpdated(const FBoardInfoStruct& BoardInfo)
+void AServerGameStateBase::Multicast_BoardInfoStruct_Implementation(FName EventName, const FBoardInfoStruct& BoardInfo)
+{
+	OnPlacementEvent.Broadcast(EventName, BoardInfo);
+}
+
+void AServerGameStateBase::Server_OnTurnUpdated(FName EventName, const FBoardInfoStruct& BoardInfo)
 {
 	if (HasAuthority())
 	{
-		Multicast_BoardInfo(BoardInfo);
+		BoardInfoStruct = BoardInfo;
+		Multicast_BoardInfoStruct(EventName, BoardInfo);
 	}
-}
-
-void AServerGameStateBase::Multicast_BoardInfo_Implementation(const FBoardInfoStruct& BoardInfo)
-{
-	BoardInfoStruct = BoardInfo;
 }
