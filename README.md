@@ -5,7 +5,8 @@ https://drive.google.com/file/d/1qJWxLrUKDjc__DFEXR_FDTke3I86LX4-/view?usp=shari
 #### 1. [개요](#1)
 #### 2. [지적사항](#2)
 #### 3. [간단한 계획](#3)
-
+#### 4. [수정중 이슈](#4)
+#### 4. [바뀐 점](#4)
 
 # 개요<a name='1'></a>
  [목차로 돌아가기](#0)<br>
@@ -42,7 +43,7 @@ https://drive.google.com/file/d/1qJWxLrUKDjc__DFEXR_FDTke3I86LX4-/view?usp=shari
 
 이상 4가지 점을 유의 하면서 수정합니다.
 
- # 1주차<a name='4'></a>
+ # 수정 중 이슈<a name='4'></a>
  [목차로 돌아가기](#0)<br>
  
 1주차 목표<br>
@@ -151,10 +152,7 @@ UGameBoard.cpp<br>
 <img src="https://user-images.githubusercontent.com/91234912/235110391-b35563ef-bed9-4f3e-8890-6b16c249cbb6.png" width="800" height = "500"><br><br>
 
 게임이 시작할 때 가운데 첫 돌을 놓는 기능입니다. 이중 OthelloChangeturn은 번갈아 가면서 돌을 놓기 위해서 턴을 넘겨주는 기능을 가진 함수인데, 턴 넘기는 것은 게임 모드로
-옮겼기 때문에 보는 것처럼 오류가 났습니다. 이는 추후에 수정하겠습니다.
-
- # 2주차<a name='5'></a>
- [목차로 돌아가기](#0)<br>
+옮겼기 때문에 보는 것처럼 오류가 났습니다. 이는 추후에 수정하겠습니다.<br><br>
  
 <img src="https://user-images.githubusercontent.com/91234912/235624141-679e5fbc-b936-4071-b0da-19e66cafbc5e.png" width="800" height = "400"><br><br>
 하드코딩된 부분들을 enum을 이용해서 가독성을 높이고 오타들을 수정했습니다. 전반적으로 코드가 조금 더 읽기 편해졌습니다.<br>
