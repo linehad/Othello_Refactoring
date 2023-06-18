@@ -371,4 +371,4 @@ GameMode는 서버말고는 접근 할 수 없기 때문에 **GameState에서 �
  #### 게임 화면
 |Refactoring|Ai|MultiGame|
 |:-----:|:-----:|:-----:|
-|<img src="" height = "300">|<img src="" height = "300">|<img src="" height = "300">|
+|<img src="https://github.com/linehad/Othello_Refactoring/assets/91234912/b40b80cf-ac24-4681-9792-5201c6c11dcb" height = "300">|<img src="https://github.com/linehad/Othello_Refactoring/assets/91234912/5d2a19f7-31fe-46e6-ae31-225d1e0d6a7b" height = "300">|<img src="https://github.com/linehad/Othello_Refactoring/assets/91234912/54227593-6d59-4074-b30d-3a323ffe76b3" height = "300">|
