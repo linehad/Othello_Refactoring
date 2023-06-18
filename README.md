@@ -187,16 +187,178 @@ public:
 한편으로는 구조체의 이름이 중복되어 일어난 일이기 때문에 구조체의 이름을 **FGameInfoStruct**로 바꿔주어서 해결하였습니다.
 
 ```c++
-USTRUCT()
-struct FGameInfoStruct
+USTRUCT(BlueprintType)
+struct OTHELLO_API FGameInfoStruct
 {
-	GENERATED_BODY()
+	GENERATED_USTRUCT_BODY()
 
 public:
-	int32 Size;
-	int32 Time;
-	int8 GameTurn = 0;
+	UPROPERTY()
+		int32 Size;
+
+	UPROPERTY()
+		int32 Time;
+
+	FGameInfoStruct()
+		: Size(0), Time(0)
+	{
+	}
 };
 ```
 
  # 변경 점<a name='5'></a>
+
+#### 기존 코드 GameBoard.cpp
+
+```c++
+void UGameBoard::NativeConstruct()
+{
+	...
+	// 버튼에 정보 넘겨주고 함수와 묶기
+	if (OthelloButton)
+	{
+		...
+		for (int i = 0; i < boardSize; i++)
+		{
+			for (int j = 0; j < boardSize; j++)
+			{
+				...
+				arrOthelloButton[arr_index]->OthlloPices_Button->OnClicked.AddDynamic(this, &UGameBoard::NextTurn);
+				arr_index++;
+			}
+		}
+		// 시작 돌 놓기
+		StartSet();
+	}
+}
+```
+
+#### 기존 코드 ServerGameStateBase.cpp
+```c++	
+void AServerGameStateBase::OthelloNextturn(int othelloArrIndex)
+{
+	...
+
+
+	 게임 오버를 호출하는 기능
+
+	 눌린 버튼을 찾고 뒤집는 기능
+
+	
+	 서버 클라에 따라 변경점을 적용하는 기능
+
+	 순서를 바꾸고, 누를 수 있는 위치를 다시 표시하며 점수를 세는 기능
+		
+	 게임 둘 수 있는 위치가 있는지 체크하고 없으면 턴을 넘기는 기능
+		
+	 게임이 끝났는지 체크하는 기능
+
+
+	OthelloBoard->SetScore(black_score, white_score);
+	OthelloBoard->SetblackScore(black_score);
+	OthelloBoard->SetwhiteScore(white_score);
+
+	점수 세는 기능
+	턴 뒤집는 기능
+```
+
+게임 보드에서 이벤트를 바인딩하고 스테이트에서 기능을 실행하는 엉망인 코드입니다. 원래는 전부 GameBoard.cpp 에 있었던 기능이지만 그럼에도 클래스 자체에 기능이 너무 많고 밀집되어 있습니다.<br><br>
+
+#### 변경 코드 GameBoard.cpp
+
+```c++
+void UGameBoard::NativeConstruct()
+{
+	Super::NativeConstruct();
+
+	GameState = Cast<AServerGameStateBase>(GetWorld()->GetGameState());
+	if (GameState) // 스테이트에서 전달해주는 구조체를 통해 착수이벤트 바인딩
+	{
+		GameState->OnPlacementEvent.AddDynamic(this, &UGameBoard::Placement);
+	}
+}
+
+void UGameBoard::Placement(FName EventName, const FBoardInfoStruct& Data)
+{
+	const int32 ClickPos = Data.Index;
+
+	// 보드의 버튼을 못누르게 하는 기능
+	
+	if (EventName == TEXT("Placement"))
+	{
+		Placement(Data.Index, !Data.Turn); // GameMode에서 미리 턴을 뒤집었기 때문에 현재 턴은 다르다!
+
+		// 착수 위치에 기반해서 돌을 실제로 뒤집어줌
+		for(int i=0;i< Data.ReversePosArr.Num();i++)
+		{
+			int index = Data.ReversePosArr[i];
+			arrOthelloButton[index]->Placement(!Data.Turn);
+		}
+
+		// 착수 가능한 위치를 표시함
+		PossiblePiece(Data);
+	}
+	// 제한시간이 다 지나가면 실행됨
+	else if (EventName == TEXT("TimeOut"))
+	{
+		// 착수 가능한 위치를 표시함
+		PossiblePiece(Data);
+	}
+	else if (EventName == TEXT("TurnOut")) // 더 이상 둘 수 없기에 그냥 턴이 넘어갔다. 따라서 미리 뒤집는 과정이 없어짐
+	{
+		// 착수 가능한 위치를 표시함
+		for (int i = 0; i < Data.PlacementPosArr.Num(); i++)
+		{
+			int index = Data.PlacementPosArr[i];
+			arrOthelloButton[index]->PossiblePiece(SERVER_PLAY);
+		}
+	}
+	// 게임 시작시 최초로 실행됨
+	else if (EventName == TEXT("SetStart"))
+	{
+		for (int i = 0; i < Data.PlacementPosArr.Num(); i++)
+		{
+			int index = Data.PlacementPosArr[i];
+			arrOthelloButton[index]->PossiblePiece(SET_START);
+		}
+	}
+	LastBoardInfo = Data;
+}
+```
+
+#### 변경 코드 ServerGameStateBase.cpp
+```c++	
+void AServerGameStateBase::OthelloNextturn(int othelloArrIndex)
+{
+void AServerGameStateBase::BindEvent()
+{
+	AOthelloGameModeBase* GameMode = GetWorld()->GetAuthGameMode<AOthelloGameModeBase>();
+	ASinglePlayGameMode* SingleGameMod = GetWorld()->GetAuthGameMode<ASinglePlayGameMode>();
+
+	if (GameMode) //클라에서는 접근이 불가능하기 때문에 서버에서만 실행이 된다.
+	{
+		GameMode->OnGameInfoUpdated.AddDynamic(this, &AServerGameStateBase::Server_GameInfoStructUpdated);
+		GameMode->OnTurnUpdated.AddDynamic(this, &AServerGameStateBase::Server_OnTurnUpdated);
+	}
+	else if (SingleGameMod) //싱글 전용
+	{
+		SingleGameMod->OnGameInfoUpdated.AddDynamic(this, &AServerGameStateBase::Server_GameInfoStructUpdated);
+		SingleGameMod->OnTurnUpdated.AddDynamic(this, &AServerGameStateBase::Server_OnTurnUpdated);
+	}
+}
+```
+
+<br><br>
+#### 바뀐 점
+기존에는 GameBoard에서 모든것을 연산하고 처리했으므로 매우 GameBoard는 비대한 코드를 가지고 있었으며 OthelloNextturn이라는 필요하지 않은 중복된 함수도 가지고 있었습니다.<br>
+이는 기능을 추가 해야 하거나 확장해야 하는 경우 GameBoard를 다시 만들어야 하는 것을 의미하며, 코드중복을 비롯해 가독성이 떨어지게 됩니다. <br>
+따라서 게임에 대한 연산등 게임에 필요한 부분을 GameMode로 옮겼으며, 클래스간 결합도를 최소화 하기 위해서 Broadcast를 이용해 이벤트 형식으로 다른 클래스틀이 동작하게 만들었습니다.<br><br>
+
+보드로부터 둔 위치를 RPC를 통해 GameMode로 전달하고 이를 받은 GameMode에서 뒤접어야 하는 돌의 위치, 상대가 둘 수 있는 위치 등을 연산하여 Broadcast를 통해 GameState로 전달합니다.<br>
+GameMode는 서버말고는 접근 할 수 없기 때문에 GameState에서 클라이언트로 이벤트를 전파하는 역할을 담당합니다.<br>
+GameState에서 GameMode의 이벤트를 받아 실행하는 시점은 서버이기 때문에 멀티캐스트를 통해 이벤트를 다시 서버와 클라이언트에 Broadcast 합니다. GameState는 클라이언트에서도 접근이 가능하기에
+이벤트가 Broadcast되면 해당 이벤트를 구독하고 있는 위젯들은 EventName에 맞는 함수를 실행 함으로써 동작합니다.<br><br>
+
+따라서 기존에는 멀티 게임과 Ai와 대전하는 싱글 게임을 분리해서 만들었지만 EventName만 바꾸고 GameMode를 바꿔준다면 나머지 코드들은 수정할 필요없이 재사용이 가능합니다.<br>
+그렇기 때문에 기존에 분리해 두었던 두 기능을 하나로 합쳐 게임을 완성하였습니다.
+
