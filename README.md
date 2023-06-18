@@ -12,7 +12,7 @@ https://drive.google.com/file/d/1qJWxLrUKDjc__DFEXR_FDTke3I86LX4-/view?usp=shari
 
  [목차로 돌아가기](#0)<br>
  
- https://github.com/linehad/Ue4_OthelloAi
+[ https://github.com/linehad/Ue4_OthelloAi](https://github.com/linehad/Ue4_OthelloAi/blob/main/Source/Othello/GameBoard.cpp)
  <br>
  언리얼을 처음 접했을 때 이를 학습하기 위해 UMG만을 사용해서 오델로를 만들고 Ai를 추가하였습니다.<br>
  하지만 코드 리뷰 당시 GameBoard 클래스의 크기가 너무 비대하다는 지적을 받았고<br>
