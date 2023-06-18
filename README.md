@@ -359,3 +359,11 @@ GameMode는 서버말고는 접근 할 수 없기 때문에 **GameState에서 �
 따라서 기존에는 멀티 게임과 Ai와 대전하는 싱글 게임을 분리해서 만들었지만 EventName만 바꾸고 GameMode를 바꿔준다면 나머지 코드들은 **수정할 필요없이 재사용이 가능합니다.** <br>
 그렇기 때문에 기존에 분리해 두었던 두 기능을 하나로 합쳐 게임을 완성하였습니다.
 
+ # 게임 화면<a name='6'></a>
+			   
+ [목차로 돌아가기](#0)<br>
+
+ #### 메인 화면
+|Refactoring|Ai|MultiGame|
+|:-----:|:-----:|:-----:|
+|<img src="https://user-images.githubusercontent.com/91234912/246667234-f557392f-bea3-4214-b984-2a45bad02b97.PNG" height = "300">|<img src="https://user-images.githubusercontent.com/91234912/246667235-f50976b2-6817-423d-82ca-3c1ccb2dd35e.PNG" height = "300">|<img src="https://user-images.githubusercontent.com/91234912/246667233-c2ca2e53-eda0-4290-a077-40ec1f6fbe98.PNG" height = "300">|
