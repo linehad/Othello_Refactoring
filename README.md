@@ -350,15 +350,15 @@ void AServerGameStateBase::BindEvent()
 
 <br><br>
 #### 바뀐 점
-기존에는 GameBoard에서 모든것을 연산하고 처리했으므로 매우 GameBoard는 비대한 코드를 가지고 있었으며 OthelloNextturn이라는 필요하지 않은 중복된 함수도 가지고 있었습니다.<br>
+기존에는 **GameBoard**에서 모든것을 연산하고 처리했으므로 매우 GameBoard는 비대한 코드를 가지고 있었으며 **OthelloNextturn이라는 필요하지 않은 중복된 함수**도 가지고 있었습니다.<br>
 이는 기능을 추가 해야 하거나 확장해야 하는 경우 GameBoard를 다시 만들어야 하는 것을 의미하며, 코드중복을 비롯해 가독성이 떨어지게 됩니다. <br>
 따라서 게임에 대한 연산등 게임에 필요한 부분을 GameMode로 옮겼으며, 클래스간 결합도를 최소화 하기 위해서 Broadcast를 이용해 이벤트 형식으로 다른 클래스틀이 동작하게 만들었습니다.<br><br>
 
-보드로부터 둔 위치를 RPC를 통해 GameMode로 전달하고 이를 받은 GameMode에서 뒤접어야 하는 돌의 위치, 상대가 둘 수 있는 위치 등을 연산하여 Broadcast를 통해 GameState로 전달합니다.<br>
-GameMode는 서버말고는 접근 할 수 없기 때문에 GameState에서 클라이언트로 이벤트를 전파하는 역할을 담당합니다.<br>
-GameState에서 GameMode의 이벤트를 받아 실행하는 시점은 서버이기 때문에 멀티캐스트를 통해 이벤트를 다시 서버와 클라이언트에 Broadcast 합니다. GameState는 클라이언트에서도 접근이 가능하기에
+보드로부터 둔 위치를 RPC를 통해 GameMode로 전달하고 이를 받은 GameMode에서 뒤접어야 하는 돌의 위치, 상대가 둘 수 있는 위치 등을 연산하여 **Broadcast를 통해 GameState로 전달**합니다.<br>
+GameMode는 서버말고는 접근 할 수 없기 때문에 **GameState에서 클라이언트로 이벤트를 전파하는 역할**을 담당합니다.<br>
+**GameState에서 GameMode의 이벤트를 받아 실행하는 시점은 서버**이기 때문에 **멀티캐스트를 통해 이벤트를 다시 서버와 클라이언트에 Broadcast** 합니다. GameState는 클라이언트에서도 접근이 가능하기에
 이벤트가 Broadcast되면 해당 이벤트를 구독하고 있는 위젯들은 EventName에 맞는 함수를 실행 함으로써 동작합니다.<br><br>
 
-따라서 기존에는 멀티 게임과 Ai와 대전하는 싱글 게임을 분리해서 만들었지만 EventName만 바꾸고 GameMode를 바꿔준다면 나머지 코드들은 수정할 필요없이 재사용이 가능합니다.<br>
+따라서 기존에는 멀티 게임과 Ai와 대전하는 싱글 게임을 분리해서 만들었지만 EventName만 바꾸고 GameMode를 바꿔준다면 나머지 코드들은 **수정할 필요없이 재사용이 가능합니다.** <br>
 그렇기 때문에 기존에 분리해 두었던 두 기능을 하나로 합쳐 게임을 완성하였습니다.
 
