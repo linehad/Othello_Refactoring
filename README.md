@@ -7,6 +7,7 @@ https://drive.google.com/file/d/1qJWxLrUKDjc__DFEXR_FDTke3I86LX4-/view?usp=shari
 #### 3. [간단한 계획](#3)
 #### 4. [수정 중 이슈](#4)
 #### 5. [변경 점](#5)
+#### 6. [게임 화면](#6)
 
 # 개요<a name='1'></a>
 
