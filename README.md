@@ -18,7 +18,7 @@ https://drive.google.com/file/d/1qJWxLrUKDjc__DFEXR_FDTke3I86LX4-/view?usp=shari
  하지만 코드 리뷰 당시 GameBoard 클래스의 크기가 너무 비대하다는 지적을 받았고<br>
  이를 해결하면서 만든 오델로를 멀티게임으로 바꿔보라는 과제를 받았습니다.<br>
  
- https://github.com/linehad/Ue4_OthelloMultiGame
+[ https://github.com/linehad/Ue4_OthelloMultiGame](https://github.com/linehad/Ue4_OthelloMultiGame/blob/main/Source/Othello/GameBoard.cpp)
  <br>
  하지만 GameBoard의 크기가 비대하다는 것의 뜻을 잘못 이해했고, 코드의 양을 줄이기 위해 컨트롤러, 스테이트 등 코드를 옮기기만 했습니다.<br>
  이동 로직을 GameMode로 옮겼어야 됐다는 것을 깨닫고 리펙토링을 해보려고 합니다.<br>
