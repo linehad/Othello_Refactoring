@@ -367,3 +367,8 @@ GameMode는 서버말고는 접근 할 수 없기 때문에 **GameState에서 �
 |Refactoring|Ai|MultiGame|
 |:-----:|:-----:|:-----:|
 |<img src="https://user-images.githubusercontent.com/91234912/246667234-f557392f-bea3-4214-b984-2a45bad02b97.PNG" height = "300">|<img src="https://user-images.githubusercontent.com/91234912/246667235-f50976b2-6817-423d-82ca-3c1ccb2dd35e.PNG" height = "300">|<img src="https://user-images.githubusercontent.com/91234912/246667233-c2ca2e53-eda0-4290-a077-40ec1f6fbe98.PNG" height = "300">|
+
+ #### 게임 화면
+|Refactoring|Ai|MultiGame|
+|:-----:|:-----:|:-----:|
+|<img src="" height = "300">|<img src="" height = "300">|<img src="" height = "300">|
