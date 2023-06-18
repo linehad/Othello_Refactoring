@@ -146,13 +146,6 @@ void AOthelloPlayerController::ChangeWidget_Implementation(TSubclassOf<UUserWidg
 ```
 
 이제 보드 위젯으로 인자값을 넘겨주어야 하는데 위젯을 교체하는 함수가 문제가 됩니다. 위젯을 교체 할 때마다 맨 하단에 있는 if문처럼 CurrentWidget이 무엇을 들고 있는지 비교를 해야 하기 때문에 각 위젯을 추가하고 지우는 함수를 따로 추가합니다.<br><br>
-
-UGameBoard.cpp<br>
--StartSet(int32 size, int32 time)<br>
-<img src="https://user-images.githubusercontent.com/91234912/235110391-b35563ef-bed9-4f3e-8890-6b16c249cbb6.png" width="800" height = "500"><br><br>
-
-게임이 시작할 때 가운데 첫 돌을 놓는 기능입니다. 이중 OthelloChangeturn은 번갈아 가면서 돌을 놓기 위해서 턴을 넘겨주는 기능을 가진 함수인데, 턴 넘기는 것은 게임 모드로
-옮겼기 때문에 보는 것처럼 오류가 났습니다. 이는 추후에 수정하겠습니다.<br><br>
  
 <img src="https://user-images.githubusercontent.com/91234912/235624141-679e5fbc-b936-4071-b0da-19e66cafbc5e.png" width="800" height = "400"><br><br>
 하드코딩된 부분들을 enum을 이용해서 가독성을 높이고 오타들을 수정했습니다. 전반적으로 코드가 조금 더 읽기 편해졌습니다.<br>
