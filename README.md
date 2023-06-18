@@ -372,3 +372,6 @@ GameMode는 서버말고는 접근 할 수 없기 때문에 **GameState에서 �
 |Refactoring|Ai|MultiGame|
 |:-----:|:-----:|:-----:|
 |<img src="https://github.com/linehad/Othello_Refactoring/assets/91234912/b40b80cf-ac24-4681-9792-5201c6c11dcb" height = "300">|<img src="https://github.com/linehad/Othello_Refactoring/assets/91234912/5d2a19f7-31fe-46e6-ae31-225d1e0d6a7b" height = "300">|<img src="https://github.com/linehad/Othello_Refactoring/assets/91234912/54227593-6d59-4074-b30d-3a323ffe76b3" height = "300">|
+
+각 프로젝트의 메인화면과 게임 화면이다. 본래 오버레이 패널을 이용하여 위치 값을 직접 변경하였기에 화면이 가득 채워지지 않는 문제가 있었으나 그리드 패널로 바꾸면서 화면이 전부 채워졌다.<br>
+게임 진행화면 또한 마찬가지인데 내부 로직은 바뀌었지만 결과물은 바뀌지 않은 것을 확인할 수 있다.
